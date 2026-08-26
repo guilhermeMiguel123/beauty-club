@@ -9,6 +9,7 @@ const initialProducts = [
     id: 1,
     name: "Óleo Reparador de Argan",
     price: "89,90",
+    oldPrice: "110,00",
     category: "Tratamento",
     img: "https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800"
   },
@@ -16,6 +17,7 @@ const initialProducts = [
     id: 2,
     name: "Máscara de Hidratação Profunda",
     price: "129,90",
+    oldPrice: "",
     category: "Capilar",
     img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800"
   },
@@ -23,6 +25,7 @@ const initialProducts = [
     id: 3,
     name: "Sérum Facial Antioxidante",
     price: "149,90",
+    oldPrice: "189,90",
     category: "Skincare",
     img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800"
   },
@@ -30,6 +33,7 @@ const initialProducts = [
     id: 4,
     name: "Spray de Brilho Gloss Express",
     price: "79,90",
+    oldPrice: "",
     category: "Finalização",
     img: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800"
   },
@@ -37,6 +41,7 @@ const initialProducts = [
     id: 5,
     name: "Kit Manutenção Pós-Mechas",
     price: "199,90",
+    oldPrice: "249,90",
     category: "Kits",
     img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800"
   },
@@ -44,6 +49,7 @@ const initialProducts = [
     id: 6,
     name: "Perfume Capilar Voyage",
     price: "99,90",
+    oldPrice: "",
     category: "Fragrância",
     img: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800"
   }
@@ -66,6 +72,7 @@ export default function Products() {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [oldPrice, setOldPrice] = useState('');
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: any; name: string }>({ isOpen: false, id: null, name: '' });
@@ -105,7 +112,7 @@ export default function Products() {
     setAddedId(product.id);
     setTimeout(() => {
       setAddedId(null);
-    }, 2000); // O botão volta ao normal após 2 segundos
+    }, 2000); 
   };
 
   // Categorias dinâmicas extraídas dos produtos
@@ -124,10 +131,19 @@ export default function Products() {
     });
   }, [products, searchTerm, selectedCategory]);
 
+  // Função para calcular as parcelas em até 3x automaticamente com base no preço atual
+  const getInstallmentText = (priceStr: string) => {
+    const cleanNum = parseFloat(priceStr.replace(',', '.')) || 0;
+    if (cleanNum <= 0) return null;
+    const installmentValue = (cleanNum / 3).toFixed(2).replace('.', ',');
+    return `ou até 3x de R$ ${installmentValue} sem juros`;
+  };
+
   const handleOpenAdd = () => {
     setEditingProduct(null);
     setName('');
     setPrice('');
+    setOldPrice('');
     setCategory('');
     setImg('https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800');
     setIsModalOpen(true);
@@ -137,6 +153,7 @@ export default function Products() {
     setEditingProduct(product);
     setName(product.name);
     setPrice(product.price);
+    setOldPrice(product.oldPrice || '');
     setCategory(product.category);
     setImg(product.img);
     setIsModalOpen(true);
@@ -145,10 +162,10 @@ export default function Products() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct) {
-      const updated = products.map((p: any) => p.id === editingProduct.id ? { ...p, name, price, category, img } : p);
+      const updated = products.map((p: any) => p.id === editingProduct.id ? { ...p, name, price, oldPrice, category, img } : p);
       await saveToFirebase(updated);
     } else {
-      const newProd = { id: Date.now(), name, price, category, img: img || 'https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800' };
+      const newProd = { id: Date.now(), name, price, oldPrice, category, img: img || 'https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800' };
       await saveToFirebase([...products, newProd]);
     }
     setIsModalOpen(false);
@@ -188,7 +205,6 @@ export default function Products() {
 
       {/* Barra de Pesquisa e Filtros de Categoria */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Barra de pesquisa */}
         <div className="relative w-full md:w-80">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
             <i className="ph ph-magnifying-glass text-lg"></i>
@@ -207,7 +223,6 @@ export default function Products() {
           )}
         </div>
 
-        {/* Abas de Categorias */}
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
           {categories.map((cat: any) => (
             <button
@@ -225,58 +240,89 @@ export default function Products() {
         </div>
       </div>
 
-      {/* Grid de Produtos: 3 colunas no mobile e 4 colunas em desktops */}
+      {/* Grid de Produtos */}
       <div className="max-w-7xl mx-auto px-2 md:px-8 grid grid-cols-3 md:grid-cols-4 gap-2.5 md:gap-8">
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product: any, index: number) => (
-            <div 
-              key={product.id} 
-              style={{ animationDelay: `${index * 50}ms` }}
-              className="group flex flex-col bg-white rounded-xl md:rounded-3xl p-2 md:p-5 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 relative animate-in fade-in zoom-in-95"
-            >
-              {isAdmin && (
-                <div className="absolute top-2 right-2 z-20 flex gap-1">
-                  <button onClick={() => handleOpenEdit(product)} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-[var(--color-gold)] transition cursor-pointer" title="Editar">
-                    <i className="ph-fill ph-pencil-simple text-[10px] md:text-xs"></i>
-                  </button>
-                  <button onClick={() => setDeleteConfirm({ isOpen: true, id: product.id, name: product.name })} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-red-500 transition cursor-pointer" title="Excluir">
-                    <i className="ph-fill ph-trash text-[10px] md:text-xs"></i>
+          filteredProducts.map((product: any, index: number) => {
+            const installmentText = getInstallmentText(product.price);
+            const hasOffer = product.oldPrice && product.oldPrice.trim() !== '';
+
+            return (
+              <div 
+                key={product.id} 
+                style={{ animationDelay: `${index * 50}ms` }}
+                className="group flex flex-col justify-between bg-white rounded-xl md:rounded-3xl p-2.5 md:p-5 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 relative animate-in fade-in zoom-in-95"
+              >
+                {isAdmin && (
+                  <div className="absolute top-2 right-2 z-20 flex gap-1">
+                    <button onClick={() => handleOpenEdit(product)} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-[var(--color-gold)] transition cursor-pointer" title="Editar">
+                      <i className="ph-fill ph-pencil-simple text-[10px] md:text-xs"></i>
+                    </button>
+                    <button onClick={() => setDeleteConfirm({ isOpen: true, id: product.id, name: product.name })} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-red-500 transition cursor-pointer" title="Excluir">
+                      <i className="ph-fill ph-trash text-[10px] md:text-xs"></i>
+                    </button>
+                  </div>
+                )}
+
+                {/* Tag de Oferta */}
+                {hasOffer && (
+                  <span className="absolute top-2 left-2 z-20 bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px] md:text-[9px] uppercase font-bold tracking-widest shadow-sm">
+                    Oferta
+                  </span>
+                )}
+
+                <div>
+                  <div className="relative overflow-hidden rounded-lg md:rounded-2xl mb-2 md:mb-4 aspect-square bg-gray-50">
+                    <img 
+                      src={product.img} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <span className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2 py-0.5 rounded-full text-[8px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
+                      {product.category}
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif text-xs sm:text-sm md:text-lg text-[var(--color-dark)] mb-1 group-hover:text-[var(--color-gold)] transition-colors line-clamp-2">
+                    {product.name}
+                  </h3>
+                </div>
+
+                <div className="mt-auto pt-2 border-t border-gray-50">
+                  <div className="flex flex-col mb-2">
+                    <div className="flex items-baseline gap-1.5">
+                      {hasOffer && (
+                        <span className="text-gray-400 line-through text-[10px] md:text-xs font-medium">
+                          R$ {product.oldPrice}
+                        </span>
+                      )}
+                      <span className="font-serif font-bold text-xs sm:text-sm md:text-base text-[var(--color-dark)]">
+                        R$ {product.price}
+                      </span>
+                    </div>
+
+                    {/* Parcelamento automático em até 3x */}
+                    {installmentText && (
+                      <span className="text-[9px] md:text-[11px] text-gray-500 font-medium">
+                        {installmentText}
+                      </span>
+                    )}
+                  </div>
+
+                  <button 
+                    onClick={() => handleAddToCart(product)}
+                    className={`w-full py-2 rounded-lg text-[9px] md:text-xs uppercase font-bold tracking-widest transition shadow-sm cursor-pointer ${
+                      addedId === product.id 
+                        ? 'bg-emerald-600 text-white' 
+                        : 'bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)]'
+                    }`}
+                  >
+                    {addedId === product.id ? 'Adicionado! ✓' : 'Adicionar'}
                   </button>
                 </div>
-              )}
-
-              <div className="relative overflow-hidden rounded-lg md:rounded-2xl mb-2 md:mb-4 aspect-square bg-gray-50">
-                <img 
-                  src={product.img} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
-                />
-                <span className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2 py-0.5 rounded-full text-[8px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
-                  {product.category}
-                </span>
               </div>
-
-              <h3 className="font-serif text-xs sm:text-sm md:text-lg text-[var(--color-dark)] mb-1 group-hover:text-[var(--color-gold)] transition-colors line-clamp-2">
-                {product.name}
-              </h3>
-
-              <div className="mt-auto pt-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-                <span className="font-serif font-bold text-xs md:text-base text-[var(--color-dark)]">
-                  R$ {product.price}
-                </span>
-                <button 
-                  onClick={() => handleAddToCart(product)}
-                  className={`w-full md:w-auto px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-xs uppercase font-bold tracking-widest transition shadow-sm cursor-pointer ${
-                    addedId === product.id 
-                      ? 'bg-emerald-600 text-white' 
-                      : 'bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)]'
-                  }`}
-                >
-                  {addedId === product.id ? 'Adicionado! ✓' : 'Adicionar'}
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div className="col-span-full py-16 text-center text-gray-400">
             <i className="ph ph-package text-4xl mb-2 block"></i>
@@ -298,13 +344,17 @@ export default function Products() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (R$)</label>
-                  <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço Atual (R$)</label>
+                  <input type="text" placeholder="89,90" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
                 </div>
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Categoria</label>
-                  <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço Antigo (Opcional)</label>
+                  <input type="text" placeholder="110,00" value={oldPrice} onChange={(e) => setOldPrice(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" />
                 </div>
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Categoria</label>
+                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem</label>

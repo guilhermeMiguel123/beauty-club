@@ -1,6 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useCart } from '@/context/CartContext';
+
+import React, { useState, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -8,7 +9,7 @@ const seisCategoriasOficiais = [
   { 
     id: 1, 
     title: "Mechas & Coloração", 
-    shortDesc: "Técnicas avançadas de iluminação, correção de cor e tonalização.", 
+    ShortDesc: "Técnicas avançadas de iluminação, correção de cor e tonalização.", 
     coverImg: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800",
     items: [
       { id: '1a', name: "Mechas Loiras", price: "540,00", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
@@ -86,7 +87,6 @@ const seisCategoriasOficiais = [
   }
 ];
 
-// Renderizador Inteligente de Mídia (YouTube, Instagram, Vídeos diretos/Google Fotos e Imagens)
 const renderMediaContent = (url: string) => {
   if (!url) return null;
 
@@ -106,7 +106,7 @@ const renderMediaContent = (url: string) => {
     );
   }
 
-  // 2. Instagram (Posts e Reels)
+  // 2. Instagram
   if (url.includes('instagram.com/p/') || url.includes('instagram.com/reel/')) {
     let cleanUrl = url.split('?')[0];
     if (!cleanUrl.endsWith('/')) cleanUrl += '/';
@@ -124,7 +124,7 @@ const renderMediaContent = (url: string) => {
     );
   }
 
-  // 3. Vídeos Diretos (MP4, WebM, MOV, Google Fotos / Google Drive links diretos)
+  // 3. Vídeos Diretos
   if (url.match(/\.(mp4|webm|mov|ogg)(\?.*)?$/i) || url.includes('drive.google.com') || url.includes('uc?export=download')) {
     return (
       <video
@@ -191,6 +191,9 @@ export default function Services() {
   const [itemMedia, setItemMedia] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; type: 'cat' | 'item' | null; id: any; title: string }>({ isOpen: false, type: null, id: null, title: '' });
 
+  // Item selecionado atual (ou o primeiro da lista por padrão)
+  const currentItem = selectedCategory?.items?.find((i: any) => i.id === activeItemId) || selectedCategory?.items?.[0];
+
   const handleOpenAddCat = () => {
     setEditingCat(null);
     setCatTitle('');
@@ -253,7 +256,12 @@ export default function Services() {
       return cat;
     });
     saveToFirebase(updated);
-    setSelectedCategory(updated.find((c: any) => c.id === selectedCategory.id));
+    const updatedCat = updated.find((c: any) => c.id === selectedCategory.id);
+    setSelectedCategory(updatedCat);
+    if (!activeItemId && updatedCat.items.length > 0) {
+      setActiveMedia(updatedCat.items[0].media);
+      setActiveItemId(updatedCat.items[0].id);
+    }
     setIsItemModalOpen(false);
   };
 
@@ -270,10 +278,11 @@ export default function Services() {
         return cat;
       });
       saveToFirebase(updated);
-      setSelectedCategory(updated.find((c: any) => c.id === selectedCategory.id));
+      const newCat = updated.find((c: any) => c.id === selectedCategory.id);
+      setSelectedCategory(newCat);
       if (activeItemId === deleteConfirm.id) {
-        setActiveMedia(null);
-        setActiveItemId(null);
+        setActiveMedia(newCat?.items[0]?.media || null);
+        setActiveItemId(newCat?.items[0]?.id || null);
       }
     }
     setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' });
@@ -281,7 +290,11 @@ export default function Services() {
 
   const scheduleWhatsApp = () => {
     if (!selectedCategory) return;
-    window.open(`https://wa.me/556291128449?text=${encodeURIComponent(`*✨ AGENDAMENTO | BEAUTY CLUB*\n\nGostaria de verificar a disponibilidade para: *${selectedCategory.title}*.`)}`, '_blank');
+    const serviceName = currentItem ? currentItem.name : selectedCategory.title;
+    const servicePrice = currentItem ? (currentItem.price.includes('A avaliar') ? currentItem.price : `R$ ${currentItem.price}`) : '';
+    
+    const message = `*✨ AGENDAMENTO | BEAUTY CLUB*\n\nGostaria de verificar a disponibilidade para o serviço: *${serviceName}* ${servicePrice ? `(${servicePrice})` : ''}.`;
+    window.open(`https://wa.me/556291128449?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
@@ -312,8 +325,7 @@ export default function Services() {
           </button>
         )}
       </div>
-        
-      {/* Grid de Cards com bordas limpas e sem lag */}
+
       <div className="max-w-7xl mx-auto px-3 md:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-8 relative z-10 text-left">
         {services.map((category: any) => (
           <div 
@@ -324,14 +336,14 @@ export default function Services() {
             onClick={(e) => {
               e.preventDefault();
               setSelectedCategory(category); 
-              setActiveMedia(category.coverImg); 
-              setActiveItemId(null); 
+              setActiveMedia(category.items?.[0]?.media || category.coverImg); 
+              setActiveItemId(category.items?.[0]?.id || null); 
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 setSelectedCategory(category); 
-                setActiveMedia(category.coverImg); 
-                setActiveItemId(null);
+                setActiveMedia(category.items?.[0]?.media || category.coverImg); 
+                setActiveItemId(category.items?.[0]?.id || null);
               }
             }}
           >
@@ -353,16 +365,16 @@ export default function Services() {
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-75 group-hover:opacity-40 transition-opacity"></div>
-                
+
                 <span className="absolute bottom-2.5 left-2.5 md:bottom-3 md:left-3 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2.5 py-0.5 md:px-3 md:py-1 rounded-md text-[9px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
                   {category.items?.length || 0} Itens
                 </span>
             </div>
-            
+
             <h3 className="font-serif text-sm sm:text-base md:text-xl text-[var(--color-dark)] mb-1 md:mb-2 group-hover:text-[var(--color-gold)] transition-colors line-clamp-1">
               {category.title}
             </h3>
-            
+
             <p className="text-gray-600 font-light text-[11px] sm:text-xs md:text-sm mb-4 md:mb-6 flex-1 line-clamp-2 leading-relaxed">
               {category.shortDesc}
             </p>
@@ -379,14 +391,12 @@ export default function Services() {
         ))}
       </div>
 
-      {/* Modal / Gaveta de Catálogo */}
       {selectedCategory && (
         <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSelectedCategory(null)}></div>
-          
+
           <div className="relative bg-white w-full max-w-5xl h-[90vh] md:h-[640px] rounded-t-2xl md:rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden z-10">
-            
-            {/* Lado Esquerdo: Vitrine de Mídia (YouTube, Instagram, Vídeos, Fotos) */}
+
             <div className="w-full md:w-1/2 relative bg-black min-h-[220px] md:min-h-full flex flex-col items-center justify-center overflow-hidden">
               <button 
                 onClick={() => setSelectedCategory(null)} 
@@ -415,7 +425,6 @@ export default function Services() {
               </div>
             </div>
 
-            {/* Lado Direito: Lista de Serviços & Preços */}
             <div className="w-full md:w-1/2 bg-white flex flex-col relative overflow-hidden flex-1">
               <div className="p-5 md:p-6 pb-4 border-b border-gray-100 flex justify-between items-start bg-white z-20">
                 <div>
@@ -443,65 +452,66 @@ export default function Services() {
                 )}
               </div>
 
-              {/* Lista Scrollável */}
               <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3 divide-y divide-gray-100">
                 {selectedCategory.items.length === 0 ? (
                   <div className="py-12 text-center text-gray-400 text-sm">Nenhum serviço cadastrado nesta seção ainda.</div>
                 ) : (
-                  selectedCategory.items.map((item: any) => (
-                    <div 
-                      key={item.id} 
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => { 
-                        e.preventDefault();
-                        setActiveMedia(item.media); 
-                        setActiveItemId(item.id); 
-                      }} 
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
+                  selectedCategory.items.map((item: any) => {
+                    const isSelected = activeItemId === item.id || (!activeItemId && selectedCategory.items[0]?.id === item.id);
+                    return (
+                      <div 
+                        key={item.id} 
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => { 
+                          e.preventDefault();
                           setActiveMedia(item.media); 
-                          setActiveItemId(item.id);
-                        }
-                      }}
-                      className={`cursor-pointer group p-3.5 my-2 rounded-xl transition-all duration-150 touch-manipulation select-none ${activeItemId === item.id ? 'bg-[var(--color-nude)] border-l-4 border-[var(--color-gold)] shadow-sm' : 'hover:bg-gray-50'}`}
-                    >
-                      <div className="flex justify-between items-center w-full gap-4 pointer-events-none">
-                        <div className="flex items-center gap-3">
-                          {item.media && (
-                            <img src={item.media} alt="" className="w-10 h-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
-                          )}
-                          <span className={`text-sm md:text-base transition-colors ${activeItemId === item.id ? 'font-bold text-[var(--color-dark)]' : 'font-medium text-gray-700 group-hover:text-black'}`}>
-                            {item.name}
+                          setActiveItemId(item.id); 
+                        }} 
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            setActiveMedia(item.media); 
+                            setActiveItemId(item.id);
+                          }
+                        }}
+                        className={`cursor-pointer group p-3.5 my-2 rounded-xl transition-all duration-150 touch-manipulation select-none ${isSelected ? 'bg-[var(--color-nude)] border-l-4 border-[var(--color-gold)] shadow-sm' : 'hover:bg-gray-50'}`}
+                      >
+                        <div className="flex justify-between items-center w-full gap-4 pointer-events-none">
+                          <div className="flex items-center gap-3">
+                            {item.media && (
+                              <img src={item.media} alt="" className="w-10 h-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
+                            )}
+                            <span className={`text-sm md:text-base transition-colors ${isSelected ? 'font-bold text-[var(--color-dark)]' : 'font-medium text-gray-700 group-hover:text-black'}`}>
+                              {item.name}
+                            </span>
+                          </div>
+                          <span className="font-serif font-bold text-[var(--color-dark)] whitespace-nowrap text-sm md:text-base">
+                            {item.price.includes('A avaliar') ? item.price : `R$ ${item.price}`}
                           </span>
                         </div>
-                        <span className="font-serif font-bold text-[var(--color-dark)] whitespace-nowrap text-sm md:text-base">
-                          {item.price.includes('A avaliar') ? item.price : `R$ ${item.price}`}
-                        </span>
-                      </div>
 
-                      {isAdmin && (
-                        <div className="flex gap-4 mt-2.5 pt-2.5 border-t border-gray-200/50" onClick={(e) => e.stopPropagation()}>
-                           <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
-                              <i className="ph-fill ph-pencil-simple text-xs"></i> Editar
-                           </button>
-                           <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
-                              <i className="ph-fill ph-trash text-xs"></i> Excluir
-                           </button>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                        {isAdmin && (
+                          <div className="flex gap-4 mt-2.5 pt-2.5 border-t border-gray-200/50" onClick={(e) => e.stopPropagation()}>
+                             <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
+                                <i className="ph-fill ph-pencil-simple text-xs"></i> Editar
+                             </button>
+                             <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
+                                <i className="ph-fill ph-trash text-xs"></i> Excluir
+                             </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
-              
-              {/* Rodapé do Modal */}
+
               <div className="p-3 md:p-5 bg-white border-t border-gray-100 z-20 shadow-lg">
                 <button 
                   onClick={scheduleWhatsApp} 
                   className="w-full bg-[#25D366] hover:bg-[#1EBE5A] text-white py-3.5 md:py-4 uppercase font-bold tracking-widest text-[11px] md:text-xs flex items-center justify-center gap-2 rounded-xl shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
                 >
-                  <i className="ph-fill ph-whatsapp-logo text-lg"></i> Agendar {selectedCategory.title} pelo WhatsApp
+                  <i className="ph-fill ph-whatsapp-logo text-lg"></i> Agendar {currentItem ? currentItem.name : selectedCategory.title} pelo WhatsApp
                 </button>
               </div>
             </div>
