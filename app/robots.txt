@@ -1,0 +1,14 @@
+import { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = 'https://beautyclub.com'; // Altere para o seu domínio .com final
+
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/api/'], // Protege as rotas de API do backend
+    },
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
+}

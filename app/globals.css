@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/* 1. O Novo Design System (Substitui o tailwind.config.js) */
+@theme {
+  --color-gold: #C5A059;
+  --color-gold-light: #E8D3A2;
+  --color-gold-dark: #9B7B3E;
+  
+  --color-rose: #EAD5D5;
+  --color-rose-light: #F9F1F1;
+  --color-rose-dark: #C4A5A5;
+  
+  --color-nude: #F4ECE6;
+  --color-nude-light: #FAF7F5;
+  
+  --color-dark: #1A1A1A;
+  --color-dark-lighter: #4D4D4D;
+
+  --font-sans: var(--font-lato), sans-serif;
+  --font-serif: var(--font-playfair), serif;
+}
+
+/* 2. Estilos Globais Base */
+@layer base {
+  body {
+    background-color: var(--color-nude-light);
+    color: var(--color-dark);
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar Customizada Estética */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--color-rose-light); }
+  ::-webkit-scrollbar-thumb { 
+    background: var(--color-gold); 
+    border-radius: 4px; 
+  }
+}
+
+/* 3. Utilitários Customizados */
+@layer utilities {
+  /* Efeito de Vidro para o Menu Superior */
+  .glass-header {
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  }
+}
+
+.swiper-pagination {
+  bottom: 0px !important;
+  position: relative !important;
+  margin-top: 25px !important;
+}
+
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-nude: #F5F0EB;
+    --color-nude-light: #FAF7F2;
+    --color-gold: #C5A059;
+    --color-dark: #1A1A1A;
+    --color-rose: #E6D5CC;
+    --color-rose-light: #F4EBE6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-dark);
+    font-family: var(--font-lato), sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* ===================================================
+   ANIMAÇÕES DE ENTRADA (SCROLL REVEAL AVANÇADO)
+   =================================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Delays em cascata para grades (Cards de Produtos e Serviços) */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* ===================================================
+   KEYFRAMES E EFEITOS ESPECIAIS
+   =================================================== */
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-effect {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Ajuste das bolinhas de paginação do Swiper */
+.swiper-pagination {
+  bottom: 0px !important;
+  position: relative !important;
+  margin-top: 30px !important;
+}
+
+.swiper-pagination-bullet {
+  background: var(--color-gold) !important;
+  opacity: 0.4;
+  transition: all 0.4s ease;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+}

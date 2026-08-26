@@ -1,0 +1,16 @@
+# Beauty Club - Salão de Beleza e Estética
+
+> O Beauty Club é um salão de beleza e espaço de estética de alto padrão localizado em Anápolis, Goiás, especializado em mechas, coloração, cachoterapia, tratamentos capilares e home care exclusivo.
+
+## Principais Serviços
+- Mechas e Coloração (Mechas loiras, morena iluminada, inversas e correção)
+- Cachoterapia e modelagem de cachos
+- Tratamentos Capilares (Ozonioterapia, reconstrução e hidratação com escova inclusa)
+- Cabelos & Estética (Design de corte, escova, maquiagem, penteado e limpeza de pele)
+- Depilação corporal completa
+- Unhas & Gloss Express (Manicure, pedicure, spa dos pés e protocolo de brilho Gloss Express)
+
+## Localização e Contato
+- Endereço: Rua 24, Qd 21, Lt 09, Residencial Vale do Sol, Anápolis - GO, 75085-697
+- WhatsApp para agendamentos: (62) 9112-8449
+- Funcionamento: De Terça a Sábado
