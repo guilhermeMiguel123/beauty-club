@@ -86,6 +86,62 @@ const seisCategoriasOficiais = [
   }
 ];
 
+// Renderizador Inteligente de Mídia (YouTube, Instagram, Vídeos diretos/Google Fotos e Imagens)
+const renderMediaContent = (url: string) => {
+  if (!url) return null;
+
+  // 1. YouTube
+  const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const ytMatch = url.match(ytRegExp);
+  if (ytMatch && ytMatch[2].length === 11) {
+    const videoId = ytMatch[2];
+    return (
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
+        title="YouTube video player"
+        className="w-full h-full object-cover border-0 pointer-events-none"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  // 2. Instagram (Posts e Reels)
+  if (url.includes('instagram.com/p/') || url.includes('instagram.com/reel/')) {
+    let cleanUrl = url.split('?')[0];
+    if (!cleanUrl.endsWith('/')) cleanUrl += '/';
+    if (!cleanUrl.endsWith('embed/')) cleanUrl += 'embed/';
+    return (
+      <iframe
+        src={cleanUrl}
+        title="Instagram Embed"
+        className="w-full h-full border-0 bg-black"
+        frameBorder="0"
+        scrolling="no"
+        allowTransparency={true}
+        allow="encrypted-media"
+      />
+    );
+  }
+
+  // 3. Vídeos Diretos (MP4, WebM, MOV, Google Fotos / Google Drive links diretos)
+  if (url.match(/\.(mp4|webm|mov|ogg)(\?.*)?$/i) || url.includes('drive.google.com') || url.includes('uc?export=download')) {
+    return (
+      <video
+        src={url}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-cover"
+      />
+    );
+  }
+
+  // 4. Imagem padrão
+  return <img src={url} alt="Mídia do Procedimento" className="w-full h-full object-cover" />;
+};
+
 export default function Services() {
   const { isAdmin } = useCart();
   const [services, setServices] = useState(seisCategoriasOficiais);
@@ -230,7 +286,6 @@ export default function Services() {
 
   return (
     <section id="tratamentos" className="py-20 md:py-32 bg-[var(--color-nude)] relative overflow-hidden">
-      {/* Elementos decorativos de luxo */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-gold)]/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[var(--color-rose)]/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20"></div>
 
@@ -243,14 +298,14 @@ export default function Services() {
             Nossos <span className="italic text-[var(--color-gold)]">Serviços Premium</span>
           </h2>
           <p className="text-[#555] font-light mt-3 max-w-xl text-sm md:text-base leading-relaxed">
-            Descubra um portfólio completo de protocolos de alta performance focados en resultados visíveis, sofisticação e máximo bem-estar.
+            Descubra um portfólio completo de protocolos de alta performance focados em resultados visíveis, sofisticação e máximo bem-estar.
           </p>
         </div>
 
         {isAdmin && (
           <button 
             onClick={handleOpenAddCat} 
-            className="bg-[var(--color-dark)] text-white px-6 py-3.5 text-xs uppercase font-bold tracking-widest hover:bg-[var(--color-gold)] transition-all duration-300 flex items-center gap-2.5 rounded-xl shadow-lg cursor-pointer group"
+            className="bg-[var(--color-dark)] text-white px-6 py-3.5 text-xs uppercase font-bold tracking-widest hover:bg-[var(--color-gold)] transition-all duration-200 flex items-center gap-2.5 rounded-xl shadow-lg cursor-pointer group touch-manipulation"
           >
             <i className="ph ph-plus-circle text-lg text-[var(--color-gold)] group-hover:text-white transition"></i> 
             Nova Categoria / Seção
@@ -258,44 +313,53 @@ export default function Services() {
         )}
       </div>
         
-      {/* Grid de Cards: 2 colunas no mobile (formando exatamente 3 fileiras de 2 containers) e 3 colunas em telas maiores */}
+      {/* Grid de Cards com bordas limpas e sem lag */}
       <div className="max-w-7xl mx-auto px-3 md:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-8 relative z-10 text-left">
-        {services.map((category: any, index: number) => (
+        {services.map((category: any) => (
           <div 
             key={category.id} 
-            style={{ animationDelay: `${index * 100}ms` }}
-            className="group cursor-pointer flex flex-col h-full bg-white rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-md hover:shadow-2xl transition-all duration-500 ease-out hover:-translate-y-2 border border-white/80 relative animate-in fade-in zoom-in-95" 
-            onClick={() => { 
+            role="button"
+            tabIndex={0}
+            className="group cursor-pointer flex flex-col h-full bg-white rounded-xl p-3 md:p-6 shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-1 border border-gray-100 relative touch-manipulation select-none" 
+            onClick={(e) => {
+              e.preventDefault();
               setSelectedCategory(category); 
               setActiveMedia(category.coverImg); 
               setActiveItemId(null); 
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                setSelectedCategory(category); 
+                setActiveMedia(category.coverImg); 
+                setActiveItemId(null);
+              }
+            }}
           >
             {isAdmin && (
               <div className="absolute top-2.5 right-2.5 md:top-4 md:right-4 z-30 flex gap-1 md:gap-2">
-                <button onClick={(e) => { e.stopPropagation(); handleOpenEditCat(category); }} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center bg-white/90 backdrop-blur-md text-[var(--color-dark)] rounded-full shadow-md hover:text-[var(--color-gold)] border border-gray-100 transition cursor-pointer" title="Editar Seção">
+                <button onClick={(e) => { e.stopPropagation(); handleOpenEditCat(category); }} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center bg-white/90 backdrop-blur-md text-[var(--color-dark)] rounded-lg shadow-md hover:text-[var(--color-gold)] border border-gray-100 transition cursor-pointer touch-manipulation" title="Editar Seção">
                   <i className="ph-fill ph-pencil-simple text-xs md:text-sm"></i>
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ isOpen: true, type: 'cat', id: category.id, title: category.title }); }} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center bg-white/90 backdrop-blur-md text-[var(--color-dark)] rounded-full shadow-md hover:text-red-500 border border-gray-100 transition cursor-pointer" title="Excluir Seção">
+                <button onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ isOpen: true, type: 'cat', id: category.id, title: category.title }); }} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center bg-white/90 backdrop-blur-md text-[var(--color-dark)] rounded-lg shadow-md hover:text-red-500 border border-gray-100 transition cursor-pointer touch-manipulation" title="Excluir Seção">
                   <i className="ph-fill ph-trash text-xs md:text-sm"></i>
                 </button>
               </div>
             )}
 
-            <div className="relative overflow-hidden rounded-xl md:rounded-2xl mb-3 md:mb-5 aspect-[4/3] bg-gray-100 shadow-inner">
+            <div className="relative overflow-hidden rounded-lg mb-3 md:mb-5 aspect-[4/3] bg-gray-100 shadow-inner pointer-events-none">
                 <img 
                   src={category.coverImg} 
                   alt={category.title} 
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-75 group-hover:opacity-40 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-75 group-hover:opacity-40 transition-opacity"></div>
                 
-                <span className="absolute bottom-2.5 left-2.5 md:bottom-3 md:left-3 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
+                <span className="absolute bottom-2.5 left-2.5 md:bottom-3 md:left-3 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2.5 py-0.5 md:px-3 md:py-1 rounded-md text-[9px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
                   {category.items?.length || 0} Itens
                 </span>
             </div>
             
-            <h3 className="font-serif text-sm sm:text-base md:text-2xl text-[var(--color-dark)] mb-1 md:mb-2 group-hover:text-[var(--color-gold)] transition-colors line-clamp-1">
+            <h3 className="font-serif text-sm sm:text-base md:text-xl text-[var(--color-dark)] mb-1 md:mb-2 group-hover:text-[var(--color-gold)] transition-colors line-clamp-1">
               {category.title}
             </h3>
             
@@ -304,10 +368,10 @@ export default function Services() {
             </p>
 
             <div className="mt-auto pt-3 md:pt-4 border-t border-gray-100 flex items-center justify-between">
-              <span className="uppercase tracking-widest text-[var(--color-gold)] text-[10px] md:text-[11px] font-bold inline-flex items-center gap-1.5 md:gap-2 group-hover:translate-x-1 transition-transform">
+              <span className="uppercase tracking-widest text-[var(--color-gold)] text-[10px] md:text-[11px] font-bold inline-flex items-center gap-1.5 md:gap-2">
                   Ver Menu 
               </span>
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[var(--color-nude)] flex items-center justify-center text-[var(--color-dark)] group-hover:bg-[var(--color-gold)] group-hover:text-white transition-colors duration-300">
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-[var(--color-nude)] flex items-center justify-center text-[var(--color-dark)] group-hover:bg-[var(--color-gold)] group-hover:text-white transition-colors">
                 <i className="ph ph-arrow-right text-xs md:text-sm"></i>
               </div>
             </div>
@@ -315,26 +379,26 @@ export default function Services() {
         ))}
       </div>
 
-      {/* Modal / Gaveta de Catálogo Animada */}
+      {/* Modal / Gaveta de Catálogo */}
       {selectedCategory && (
-        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity" onClick={() => setSelectedCategory(null)}></div>
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSelectedCategory(null)}></div>
           
-          <div className="relative bg-white w-full max-w-5xl h-[90vh] md:h-[640px] rounded-t-[2.5rem] md:rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden z-10 animate-in zoom-in-95 slide-in-from-bottom duration-300">
+          <div className="relative bg-white w-full max-w-5xl h-[90vh] md:h-[640px] rounded-t-2xl md:rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden z-10">
             
-            {/* Lado Esquerdo: Vitrine de Mídia */}
-            <div className="w-full md:w-1/2 relative bg-gradient-to-br from-gray-900 to-black min-h-[200px] md:min-h-full flex flex-col items-center justify-center overflow-hidden">
+            {/* Lado Esquerdo: Vitrine de Mídia (YouTube, Instagram, Vídeos, Fotos) */}
+            <div className="w-full md:w-1/2 relative bg-black min-h-[220px] md:min-h-full flex flex-col items-center justify-center overflow-hidden">
               <button 
                 onClick={() => setSelectedCategory(null)} 
-                className="absolute top-4 right-4 z-30 text-white md:hidden p-2.5 bg-black/60 backdrop-blur-md rounded-full cursor-pointer hover:bg-black transition"
+                className="absolute top-4 right-4 z-30 text-white md:hidden p-2.5 bg-black/60 backdrop-blur-md rounded-full cursor-pointer hover:bg-black transition touch-manipulation"
               >
                 <i className="ph ph-x text-base"></i>
               </button>
 
               {activeMedia ? (
-                 <div className="absolute inset-0 w-full h-full animate-in fade-in duration-500">
-                   <img src={activeMedia} alt="Mídia do Procedimento" className="w-full h-full object-cover opacity-85 scale-105" />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                 <div className="absolute inset-0 w-full h-full">
+                   {renderMediaContent(activeMedia)}
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
                  </div>
               ) : (
                  <div className="text-center p-8 z-10">
@@ -343,11 +407,11 @@ export default function Services() {
                  </div>
               )}
 
-              <div className="absolute bottom-6 left-6 right-6 z-20 text-white hidden md:block">
-                <span className="bg-[var(--color-gold)] text-black px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest mb-2 inline-block shadow">
+              <div className="absolute bottom-6 left-6 right-6 z-20 text-white hidden md:block pointer-events-none">
+                <span className="bg-[var(--color-gold)] text-black px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mb-2 inline-block shadow">
                   Preview em Tempo Real
                 </span>
-                <p className="text-xs font-light text-gray-200 line-clamp-1">Toque em qualquer procedimento para visualizar a galeria e detalhes exclusivos.</p>
+                <p className="text-xs font-light text-gray-200 line-clamp-1">Toque em qualquer procedimento para visualizar a galeria e mídias integradas.</p>
               </div>
             </div>
 
@@ -357,7 +421,7 @@ export default function Services() {
                 <div>
                   <button 
                     onClick={() => setSelectedCategory(null)} 
-                    className="hidden md:flex absolute top-6 right-6 text-gray-400 hover:text-black bg-gray-100 hover:bg-gray-200 w-9 h-9 items-center justify-center rounded-full cursor-pointer transition"
+                    className="hidden md:flex absolute top-6 right-6 text-gray-400 hover:text-black bg-gray-100 hover:bg-gray-200 w-9 h-9 items-center justify-center rounded-lg cursor-pointer transition touch-manipulation"
                   >
                     <i className="ph ph-x text-lg"></i>
                   </button>
@@ -372,14 +436,14 @@ export default function Services() {
                 {isAdmin && (
                   <button 
                     onClick={handleOpenAddItem} 
-                    className="text-[var(--color-gold)] hover:text-[var(--color-dark)] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 mr-8 md:mr-12 cursor-pointer bg-[var(--color-nude)] px-3 py-2 rounded-lg transition"
+                    className="text-[var(--color-gold)] hover:text-[var(--color-dark)] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 mr-8 md:mr-12 cursor-pointer bg-[var(--color-nude)] px-3 py-2 rounded-lg transition touch-manipulation"
                   >
                     <i className="ph ph-plus-circle text-base"></i> Novo Item
                   </button>
                 )}
               </div>
 
-              {/* Lista Scrollável de Serviços */}
+              {/* Lista Scrollável */}
               <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3 divide-y divide-gray-100">
                 {selectedCategory.items.length === 0 ? (
                   <div className="py-12 text-center text-gray-400 text-sm">Nenhum serviço cadastrado nesta seção ainda.</div>
@@ -387,13 +451,25 @@ export default function Services() {
                   selectedCategory.items.map((item: any) => (
                     <div 
                       key={item.id} 
-                      onClick={() => { setActiveMedia(item.media); setActiveItemId(item.id); }} 
-                      className={`cursor-pointer group p-3.5 my-2 rounded-2xl transition-all duration-300 ${activeItemId === item.id ? 'bg-[var(--color-nude)] border-l-4 border-[var(--color-gold)] shadow-sm' : 'hover:bg-gray-50'}`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => { 
+                        e.preventDefault();
+                        setActiveMedia(item.media); 
+                        setActiveItemId(item.id); 
+                      }} 
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setActiveMedia(item.media); 
+                          setActiveItemId(item.id);
+                        }
+                      }}
+                      className={`cursor-pointer group p-3.5 my-2 rounded-xl transition-all duration-150 touch-manipulation select-none ${activeItemId === item.id ? 'bg-[var(--color-nude)] border-l-4 border-[var(--color-gold)] shadow-sm' : 'hover:bg-gray-50'}`}
                     >
-                      <div className="flex justify-between items-center w-full gap-4">
+                      <div className="flex justify-between items-center w-full gap-4 pointer-events-none">
                         <div className="flex items-center gap-3">
                           {item.media && (
-                            <img src={item.media} alt="" className="w-10 h-10 rounded-xl object-cover shadow-sm flex-shrink-0" />
+                            <img src={item.media} alt="" className="w-10 h-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
                           )}
                           <span className={`text-sm md:text-base transition-colors ${activeItemId === item.id ? 'font-bold text-[var(--color-dark)]' : 'font-medium text-gray-700 group-hover:text-black'}`}>
                             {item.name}
@@ -406,10 +482,10 @@ export default function Services() {
 
                       {isAdmin && (
                         <div className="flex gap-4 mt-2.5 pt-2.5 border-t border-gray-200/50" onClick={(e) => e.stopPropagation()}>
-                           <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer">
+                           <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
                               <i className="ph-fill ph-pencil-simple text-xs"></i> Editar
                            </button>
-                           <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer">
+                           <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation">
                               <i className="ph-fill ph-trash text-xs"></i> Excluir
                            </button>
                         </div>
@@ -420,12 +496,12 @@ export default function Services() {
               </div>
               
               {/* Rodapé do Modal */}
-              <div className="p-4 md:p-6 bg-white border-t border-gray-100 z-20 shadow-lg">
+              <div className="p-3 md:p-5 bg-white border-t border-gray-100 z-20 shadow-lg">
                 <button 
                   onClick={scheduleWhatsApp} 
-                  className="w-full bg-[#25D366] hover:bg-[#1EBE5A] text-white py-4 uppercase font-bold tracking-widest text-xs flex items-center justify-center gap-2.5 rounded-xl shadow-lg transition-all duration-300 transform active:scale-95 cursor-pointer"
+                  className="w-full bg-[#25D366] hover:bg-[#1EBE5A] text-white py-3.5 md:py-4 uppercase font-bold tracking-widest text-[11px] md:text-xs flex items-center justify-center gap-2 rounded-xl shadow-md transition-all duration-200 cursor-pointer touch-manipulation"
                 >
-                  <i className="ph-fill ph-whatsapp-logo text-xl"></i> Agendar {selectedCategory.title} pelo WhatsApp
+                  <i className="ph-fill ph-whatsapp-logo text-lg"></i> Agendar {selectedCategory.title} pelo WhatsApp
                 </button>
               </div>
             </div>
@@ -433,20 +509,20 @@ export default function Services() {
         </div>
       )}
 
-      {/* Modal de Seção (Admin) - URL Input */}
+      {/* Modal de Seção (Admin) */}
       {isCatModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-md w-full relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setIsCatModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full relative">
+            <button onClick={() => setIsCatModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer touch-manipulation"><i className="ph ph-x text-xl"></i></button>
             <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingCat ? "Editar Seção" : "Nova Seção"}</h3>
             <form onSubmit={handleSaveCat} className="space-y-4">
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Título da Seção</label>
-                <input type="text" value={catTitle} onChange={(e) => setCatTitle(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                <input type="text" value={catTitle} onChange={(e) => setCatTitle(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Descrição Curta</label>
-                <input type="text" value={catDesc} onChange={(e) => setCatDesc(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" />
+                <input type="text" value={catDesc} onChange={(e) => setCatDesc(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" />
               </div>
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem de Capa</label>
@@ -455,12 +531,12 @@ export default function Services() {
                   placeholder="https://exemplo.com/imagem.jpg"
                   value={catImg} 
                   onChange={(e) => setCatImg(e.target.value)} 
-                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
+                  className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
                   required
                 />
-                {catImg && <img src={catImg} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
+                {catImg && <img src={catImg} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-lg shadow-sm bg-gray-100" />}
               </div>
-              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-xl mt-2 cursor-pointer shadow-lg">
+              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-lg mt-2 cursor-pointer shadow-md touch-manipulation">
                 Salvar Seção
               </button>
             </form>
@@ -468,33 +544,37 @@ export default function Services() {
         </div>
       )}
 
-      {/* Modal de Item (Admin) - URL Input */}
+      {/* Modal de Item (Admin) */}
       {isItemModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-md w-full relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setIsItemModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full relative">
+            <button onClick={() => setIsItemModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer touch-manipulation"><i className="ph ph-x text-xl"></i></button>
             <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingItem ? "Editar Item" : "Novo Item"}</h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Procedimento</label>
-                <input type="text" value={itemName} onChange={(e) => setItemName(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                <input type="text" value={itemName} onChange={(e) => setItemName(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
                 <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (R$)</label>
-                <input type="text" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                <input type="text" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Foto ou Vídeo)</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Foto, YouTube, Instagram ou Vídeo)</label>
                 <input 
-                  type="url" 
-                  placeholder="https://exemplo.com/midia.jpg ou mp4"
+                  type="text" 
+                  placeholder="Cole o link do YouTube, Instagram, vídeo direto ou imagem"
                   value={itemMedia} 
                   onChange={(e) => setItemMedia(e.target.value)} 
-                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
+                  className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
                 />
-                {itemMedia && <img src={itemMedia} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
+                {itemMedia && (
+                  <div className="mt-3 h-28 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                    {renderMediaContent(itemMedia)}
+                  </div>
+                )}
               </div>
-              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-xl mt-2 cursor-pointer shadow-lg">
+              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-lg mt-2 cursor-pointer shadow-md touch-manipulation">
                 Salvar Item
               </button>
             </form>
@@ -504,18 +584,26 @@ export default function Services() {
 
       {/* Modal de Confirmação de Exclusão */}
       {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center relative animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative">
             <div className="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="ph-fill ph-warning"></i>
             </div>
             <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Excluir {deleteConfirm.type === 'cat' ? 'Seção' : 'Item'}?</h3>
-            <p className="text-gray-500 text-xs mb-6">Tem certeza que deseja excluir &quot;{deleteConfirm.title}&quot;? Esta ação não poderá ser desfeita.</p>
+            <p className="text-gray-500 text-xs mb-6">
+              Tem certeza que deseja excluir &quot;<span className="font-semibold text-gray-700">{deleteConfirm.title}</span>&quot;? Esta ação não pode ser desfeita.
+            </p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition cursor-pointer">
+              <button 
+                onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} 
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition cursor-pointer touch-manipulation"
+              >
                 Cancelar
               </button>
-              <button onClick={confirmDeleteAction} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-red-600 transition cursor-pointer">
+              <button 
+                onClick={confirmDeleteAction} 
+                className="flex-1 bg-red-500 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-red-600 transition cursor-pointer shadow-md touch-manipulation"
+              >
                 Sim, Excluir
               </button>
             </div>

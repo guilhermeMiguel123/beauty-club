@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -30,6 +30,10 @@ export default function Carousel() {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [img, setImg] = useState('');
+
+  // Referências para controle do Touch / Swipe no Mobile
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -107,15 +111,47 @@ export default function Carousel() {
     }
   };
 
+  // Funções para manipulação do gesto Touch (Swipe)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50; // Limite mínimo para considerar um swipe
+
+    if (distance > minSwipeDistance) {
+      // Deslizou para a esquerda -> Próximo slide
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    } else if (distance < -minSwipeDistance) {
+      // Deslizou para a direita -> Slide anterior
+      setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    }
+
+    // Reseta valores
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
   return (
-    <section className="relative h-[85vh] w-full overflow-hidden bg-black">
+    <section 
+      className="relative h-[85vh] w-full overflow-hidden bg-black select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {slides.map((slide: any, idx: number) => (
         <div 
           key={slide.id} 
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
           <div className="absolute inset-0 bg-black/40 z-10"></div>
-          <img src={slide.img} alt={slide.title} className="w-full h-full object-cover" />
+          <img src={slide.img} alt={slide.title} className="w-full h-full object-cover pointer-events-none" />
           
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto">
             <span className="uppercase tracking-[0.3em] text-[var(--color-gold)] text-xs md:text-sm font-bold mb-4 drop-shadow-md">
@@ -125,10 +161,10 @@ export default function Carousel() {
               {slide.title}
             </h1>
             <a 
-              href="#tratamentos" 
+              href="#produtos" 
               className="bg-white text-[var(--color-dark)] px-8 py-4 uppercase tracking-widest text-xs font-bold rounded-sm hover:bg-[var(--color-gold)] hover:text-white transition shadow-2xl cursor-pointer"
             >
-              Explorar Serviços
+              Explorar Produtos
             </a>
           </div>
         </div>
@@ -157,7 +193,7 @@ export default function Carousel() {
           <button 
             key={idx} 
             onClick={() => setCurrentIndex(idx)} 
-            className={`w-3 h-3 rounded-full transition-all ${idx === currentIndex ? 'bg-[var(--color-gold)] w-8' : 'bg-white/50'}`}
+            className={`w-3 h-3 rounded-full transition-all cursor-pointer ${idx === currentIndex ? 'bg-[var(--color-gold)] w-8' : 'bg-white/50'}`}
           ></button>
         ))}
       </div>

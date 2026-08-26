@@ -24,24 +24,43 @@ type AppContextType = {
 const CartContext = createContext<AppContextType | undefined>(undefined);
 
 // 📋 LISTA DE E-MAILS AUTORIZADOS A SEREM ADMINISTRADORES
-// Adicione o seu e-mail e o e-mail da Mônica aqui dentro:
 const ADMIN_EMAILS = [
   "guilherme12miguel123@gmail.com",
-  "monica@gmail.com" // <--- Substitua pelo e-mail real da Mônica que ela usa no Google
+  "monica@gmail.com"
 ];
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  // Inicializa o carrinho buscando do localStorage para não perder ao atualizar a página
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('beauty_club_cart');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error("Erro ao carregar carrinho:", e);
+        }
+      }
+    }
+    return [];
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<any>(null);
+
+  // Sempre que o carrinho mudar, salva no localStorage automaticamente
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('beauty_club_cart', JSON.stringify(cart));
+    }
+  }, [cart]);
 
   // Monitora o login do Firebase via Google
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       
-      // Verifica se o e-mail logado está na lista de administradores permitidos
       if (currentUser && currentUser.email && ADMIN_EMAILS.includes(currentUser.email)) {
         setIsAdmin(true);
       } else {
@@ -97,7 +116,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         quantity: 1 
       }];
     });
-    setIsCartOpen(true);
   };
 
   const removeFromCart = (id: number) => setCart((prev) => prev.filter((item) => item.id !== id));
@@ -138,8 +156,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export const useCart = () => {
+export function useCart() {
   const context = useContext(CartContext);
   if (!context) throw new Error('useCart deve ser usado dentro de um CartProvider');
   return context;
-};
+}

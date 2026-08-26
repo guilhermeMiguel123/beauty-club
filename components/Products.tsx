@@ -58,6 +58,9 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
+  // Estado para feedback visual de produto adicionado
+  const [addedId, setAddedId] = useState<number | null>(null);
+
   // Estados do Modal e Exclusão
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
@@ -94,6 +97,15 @@ export default function Products() {
         alert("Erro ao salvar produtos no Firebase: " + err.message);
       }
     }
+  };
+
+  // Função para adicionar ao carrinho mantendo o usuário na página e dando feedback visual
+  const handleAddToCart = (product: any) => {
+    addToCart(product);
+    setAddedId(product.id);
+    setTimeout(() => {
+      setAddedId(null);
+    }, 2000); // O botão volta ao normal após 2 segundos
   };
 
   // Categorias dinâmicas extraídas dos produtos
@@ -253,10 +265,14 @@ export default function Products() {
                   R$ {product.price}
                 </span>
                 <button 
-                  onClick={() => addToCart(product)}
-                  className="w-full md:w-auto bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-xs uppercase font-bold tracking-widest transition shadow-sm cursor-pointer"
+                  onClick={() => handleAddToCart(product)}
+                  className={`w-full md:w-auto px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-xs uppercase font-bold tracking-widest transition shadow-sm cursor-pointer ${
+                    addedId === product.id 
+                      ? 'bg-emerald-600 text-white' 
+                      : 'bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)]'
+                  }`}
                 >
-                  Comprar
+                  {addedId === product.id ? 'Adicionado! ✓' : 'Adicionar'}
                 </button>
               </div>
             </div>
