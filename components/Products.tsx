@@ -1,42 +1,77 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const initialProducts = [
-  { id: 1, name: "Kit Home Care Pós-Mechas", price: "189,90", desc: "Manutenção da cor e hidratação profunda em casa.", img: "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800" },
-  { id: 2, name: "Óleo Reparador de Argan", price: "89,90", desc: "Brilho instantâneo e proteção térmica para os fios.", img: "https://images.unsplash.com/photo-1608248597359-994b633094c7?auto=format&fit=crop&w=800" },
-  { id: 3, name: "Máscara de Reconstrução Ozonizada", price: "149,90", desc: "Tratamento de alto impacto para cabelos danificados.", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800" },
-  { id: 4, name: "Leave-in Defrizante Térmico", price: "79,90", desc: "Proteção contra secador e chapinha com efeito antifrizz.", img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800" }
+  {
+    id: 1,
+    name: "Óleo Reparador de Argan",
+    price: "89,90",
+    category: "Tratamento",
+    img: "https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800"
+  },
+  {
+    id: 2,
+    name: "Máscara de Hidratação Profunda",
+    price: "129,90",
+    category: "Capilar",
+    img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800"
+  },
+  {
+    id: 3,
+    name: "Sérum Facial Antioxidante",
+    price: "149,90",
+    category: "Skincare",
+    img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800"
+  },
+  {
+    id: 4,
+    name: "Spray de Brilho Gloss Express",
+    price: "79,90",
+    category: "Finalização",
+    img: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800"
+  },
+  {
+    id: 5,
+    name: "Kit Manutenção Pós-Mechas",
+    price: "199,90",
+    category: "Kits",
+    img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800"
+  },
+  {
+    id: 6,
+    name: "Perfume Capilar Voyage",
+    price: "99,90",
+    category: "Fragrância",
+    img: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800"
+  }
 ];
 
-const convertFileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 export default function Products() {
-  const { addToCart, isAdmin } = useCart();
+  const { isAdmin, addToCart } = useCart();
   const [products, setProducts] = useState(initialProducts);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Estados de busca e filtro
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+
+  // Estados do Modal e Exclusão
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
-  const [desc, setDesc] = useState('');
+  const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: any; name: string }>({ isOpen: false, id: null, name: '' });
 
   useEffect(() => {
     setIsMounted(true);
     async function loadProducts() {
       try {
-        const docRef = doc(db, "site_content", "products_grid");
+        const docRef = doc(db, "site_content", "store_products");
         const docSnap = await getDoc(docRef);
         if (docSnap.exists() && docSnap.data().value) {
           setProducts(docSnap.data().value);
@@ -53,7 +88,7 @@ export default function Products() {
     setProducts(newProducts);
     if (isMounted) {
       try {
-        await setDoc(doc(db, "site_content", "products_grid"), { value: newProducts });
+        await setDoc(doc(db, "site_content", "store_products"), { value: newProducts });
       } catch (err: any) {
         if (err.name === 'AbortError' || err.message?.includes('aborted')) return;
         alert("Erro ao salvar produtos no Firebase: " + err.message);
@@ -61,123 +96,237 @@ export default function Products() {
     }
   };
 
+  // Categorias dinâmicas extraídas dos produtos
+  const categories = useMemo(() => {
+    const cats = products.map((p: any) => p.category);
+    return ['Todos', ...Array.from(new Set(cats))];
+  }, [products]);
+
+  // Produtos filtrados por busca e categoria
+  const filteredProducts = useMemo(() => {
+    return products.filter((product: any) => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            product.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory]);
+
   const handleOpenAdd = () => {
     setEditingProduct(null);
     setName('');
     setPrice('');
-    setDesc('');
-    setImg('');
+    setCategory('');
+    setImg('https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800');
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (p: any) => {
-    setEditingProduct(p);
-    setName(p.name);
-    setPrice(p.price);
-    setDesc(p.desc);
-    setImg(p.img);
+  const handleOpenEdit = (product: any) => {
+    setEditingProduct(product);
+    setName(product.name);
+    setPrice(product.price);
+    setCategory(product.category);
+    setImg(product.img);
     setIsModalOpen(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct) {
-      const updated = products.map((p: any) => p.id === editingProduct.id ? { ...p, name, price, desc, img } : p);
+      const updated = products.map((p: any) => p.id === editingProduct.id ? { ...p, name, price, category, img } : p);
       await saveToFirebase(updated);
     } else {
-      const newP = { id: Date.now(), name, price, desc, img: img || 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800' };
-      await saveToFirebase([...products, newP]);
+      const newProd = { id: Date.now(), name, price, category, img: img || 'https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800' };
+      await saveToFirebase([...products, newProd]);
     }
     setIsModalOpen(false);
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Tem certeza que deseja excluir este produto?")) {
-      const updated = products.filter((p: any) => p.id !== id);
-      await saveToFirebase(updated);
-    }
+  const confirmDelete = async () => {
+    const updated = products.filter((p: any) => p.id !== deleteConfirm.id);
+    await saveToFirebase(updated);
+    setDeleteConfirm({ isOpen: false, id: null, name: '' });
   };
 
   return (
-    <section id="produtos" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-16 flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-100 pb-6">
+    <section id="produtos" className="py-20 md:py-32 bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border-b border-[var(--color-gold)]/20 pb-8">
         <div>
-          <span className="uppercase tracking-[0.2em] text-[var(--color-gold)] text-xs md:text-sm font-bold block mb-4">Home Care & Manutenção</span>
-          <h2 className="text-4xl md:text-5xl font-serif text-[var(--color-dark)] mb-4">Nossos <span className="italic text-[var(--color-gold)]">Produtos</span></h2>
-          <p className="text-[#4D4D4D] font-light max-w-2xl">Leve a experiência e o cuidado profissional do Beauty Club para o seu dia a dia.</p>
+          <span className="uppercase tracking-[0.25em] text-[var(--color-gold)] text-xs font-semibold block mb-3 flex items-center gap-2">
+            <span className="w-8 h-[1px] bg-[var(--color-gold)]"></span> Home Care Exclusivo
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[var(--color-dark)]">
+            Nossos <span className="italic text-[var(--color-gold)]">Produtos</span>
+          </h2>
+          <p className="text-[#555] font-light mt-3 max-w-xl text-sm md:text-base leading-relaxed">
+            Leve a experiência de cuidado profissional do Beauty Club para a sua rotina diária.
+          </p>
         </div>
 
         {isAdmin && (
-          <button onClick={handleOpenAdd} className="bg-[var(--color-dark)] text-white px-6 py-3 text-xs uppercase font-bold tracking-widest hover:bg-[var(--color-gold)] transition flex items-center gap-2 rounded-sm shadow-xl cursor-pointer">
-            <i className="ph ph-plus-circle text-xl"></i> Novo Produto
+          <button 
+            onClick={handleOpenAdd} 
+            className="bg-[var(--color-dark)] text-white px-6 py-3.5 text-xs uppercase font-bold tracking-widest hover:bg-[var(--color-gold)] transition-all duration-300 flex items-center gap-2.5 rounded-xl shadow-lg cursor-pointer group"
+          >
+            <i className="ph ph-plus-circle text-lg text-[var(--color-gold)] group-hover:text-white transition"></i> 
+            Novo Produto
           </button>
         )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {products.map((product: any) => (
-          <div key={product.id} className="group bg-[var(--color-nude)] p-6 rounded-sm flex flex-col relative border border-transparent hover:border-[var(--color-gold)] transition duration-500 shadow-sm">
-            {isAdmin && (
-              <div className="absolute top-4 right-4 z-20 flex gap-2">
-                <button onClick={() => handleOpenEdit(product)} className="w-8 h-8 flex items-center justify-center bg-white text-[var(--color-dark)] rounded-full shadow hover:text-[var(--color-gold)] transition cursor-pointer" title="Editar">
-                  <i className="ph-fill ph-pencil-simple text-xs"></i>
-                </button>
-                <button onClick={() => handleDelete(product.id)} className="w-8 h-8 flex items-center justify-center bg-white text-[var(--color-dark)] rounded-full shadow hover:text-red-500 transition cursor-pointer" title="Excluir">
-                  <i className="ph-fill ph-trash text-xs"></i>
-                </button>
-              </div>
-            )}
+      {/* Barra de Pesquisa e Filtros de Categoria */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        {/* Barra de pesquisa */}
+        <div className="relative w-full md:w-80">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+            <i className="ph ph-magnifying-glass text-lg"></i>
+          </span>
+          <input 
+            type="text"
+            placeholder="Buscar produtos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm outline-none focus:border-[var(--color-gold)] transition"
+          />
+          {searchTerm && (
+            <button onClick={() => setSearchTerm('')} className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-black">
+              <i className="ph ph-x"></i>
+            </button>
+          )}
+        </div>
 
-            <div className="relative overflow-hidden mb-6 bg-white rounded-sm aspect-square flex items-center justify-center">
-              <img src={product.img} alt={product.name} className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" />
-            </div>
-
-            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">{product.name}</h3>
-            <p className="text-[#4D4D4D] text-xs font-light mb-4 flex-1">{product.desc}</p>
-            
-            <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--color-rose)]">
-              <span className="font-serif text-lg font-bold text-[var(--color-dark)]">
-                {typeof product.price === 'number' ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : (product.price.includes('R$') ? product.price : `R$ ${product.price}`)}
-              </span>
-              <button onClick={() => addToCart(product)} className="bg-[var(--color-dark)] text-white px-4 py-2 uppercase text-[10px] font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-sm cursor-pointer flex items-center gap-1 shadow">
-                <i className="ph ph-shopping-bag text-sm"></i> Comprar
-              </button>
-            </div>
-          </div>
-        ))}
+        {/* Abas de Categorias */}
+        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+          {categories.map((cat: any) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                selectedCategory === cat
+                  ? 'bg-[var(--color-dark)] text-white shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-white p-8 rounded-sm shadow-2xl max-w-md w-full relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
-            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingProduct ? "Editar Produto" : "Novo Produto"}</h3>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div><label className="block text-xs uppercase font-bold text-gray-600 mb-1">Nome do Produto</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border p-3 text-sm outline-none focus:border-[var(--color-gold)]" required /></div>
-              <div><label className="block text-xs uppercase font-bold text-gray-600 mb-1">Preço (ex: 89,90)</label><input type="text" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border p-3 text-sm outline-none focus:border-[var(--color-gold)]" required /></div>
-              <div><label className="block text-xs uppercase font-bold text-gray-600 mb-1">Descrição</label><textarea value={desc} onChange={(e) => setDesc(e.target.value)} className="w-full border p-3 text-sm outline-none focus:border-[var(--color-gold)] h-20 resize-none" required /></div>
-              
-              <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Selecionar Imagem do Computador</label>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const base64 = await convertFileToBase64(file);
-                      setImg(base64);
-                    }
-                  }} 
-                  className="w-full border p-2 text-sm outline-none bg-white text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-bold file:bg-[var(--color-dark)] file:text-white hover:file:bg-[var(--color-gold)] cursor-pointer" 
+      {/* Grid de Produtos: 3 colunas no mobile e 4 colunas em desktops */}
+      <div className="max-w-7xl mx-auto px-2 md:px-8 grid grid-cols-3 md:grid-cols-4 gap-2.5 md:gap-8">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product: any, index: number) => (
+            <div 
+              key={product.id} 
+              style={{ animationDelay: `${index * 50}ms` }}
+              className="group flex flex-col bg-white rounded-xl md:rounded-3xl p-2 md:p-5 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 relative animate-in fade-in zoom-in-95"
+            >
+              {isAdmin && (
+                <div className="absolute top-2 right-2 z-20 flex gap-1">
+                  <button onClick={() => handleOpenEdit(product)} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-[var(--color-gold)] transition cursor-pointer" title="Editar">
+                    <i className="ph-fill ph-pencil-simple text-[10px] md:text-xs"></i>
+                  </button>
+                  <button onClick={() => setDeleteConfirm({ isOpen: true, id: product.id, name: product.name })} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-white/90 text-[var(--color-dark)] rounded-full shadow hover:text-red-500 transition cursor-pointer" title="Excluir">
+                    <i className="ph-fill ph-trash text-[10px] md:text-xs"></i>
+                  </button>
+                </div>
+              )}
+
+              <div className="relative overflow-hidden rounded-lg md:rounded-2xl mb-2 md:mb-4 aspect-square bg-gray-50">
+                <img 
+                  src={product.img} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
                 />
-                {img && <img src={img} alt="Preview" className="mt-2 h-20 w-20 object-cover rounded shadow" />}
+                <span className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2 py-0.5 rounded-full text-[8px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
+                  {product.category}
+                </span>
               </div>
 
-              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition mt-4 cursor-pointer">
+              <h3 className="font-serif text-xs sm:text-sm md:text-lg text-[var(--color-dark)] mb-1 group-hover:text-[var(--color-gold)] transition-colors line-clamp-2">
+                {product.name}
+              </h3>
+
+              <div className="mt-auto pt-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+                <span className="font-serif font-bold text-xs md:text-base text-[var(--color-dark)]">
+                  R$ {product.price}
+                </span>
+                <button 
+                  onClick={() => addToCart(product)}
+                  className="w-full md:w-auto bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-xs uppercase font-bold tracking-widest transition shadow-sm cursor-pointer"
+                >
+                  Comprar
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full py-16 text-center text-gray-400">
+            <i className="ph ph-package text-4xl mb-2 block"></i>
+            <p className="text-sm">Nenhum produto encontrado para sua busca.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Modal de Adicionar/Editar Produto */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-md w-full relative animate-in zoom-in-95 duration-200">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
+            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingProduct ? "Editar Produto" : "Novo Produto"}</h3>
+            <form onSubmit={handleSave} className="space-y-4">
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Produto</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (R$)</label>
+                  <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Categoria</label>
+                  <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem</label>
+                <input 
+                  type="url" 
+                  placeholder="https://exemplo.com/produto.jpg"
+                  value={img} 
+                  onChange={(e) => setImg(e.target.value)} 
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
+                  required
+                />
+                {img && <img src={img} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
+              </div>
+              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-xl mt-2 cursor-pointer shadow-lg">
                 Salvar Produto
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Exclusão */}
+      {deleteConfirm.isOpen && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center relative animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+              <i className="ph-fill ph-warning"></i>
+            </div>
+            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Excluir Produto?</h3>
+            <p className="text-gray-500 text-xs mb-6">Tem certeza que deseja excluir &quot;{deleteConfirm.name}&quot;?</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteConfirm({ isOpen: false, id: null, name: '' })} className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition cursor-pointer">
+                Cancelar
+              </button>
+              <button onClick={confirmDelete} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-red-600 transition cursor-pointer">
+                Sim, Excluir
+              </button>
+            </div>
           </div>
         </div>
       )}

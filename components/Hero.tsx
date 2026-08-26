@@ -19,15 +19,6 @@ const initialSlides = [
   }
 ];
 
-const convertFileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 export default function Carousel() {
   const { isAdmin } = useCart();
   const [slides, setSlides] = useState(initialSlides);
@@ -80,7 +71,7 @@ export default function Carousel() {
     setEditingSlide(null);
     setTitle('');
     setSubtitle('');
-    setImg('');
+    setImg('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1920');
     setIsModalOpen(true);
   };
 
@@ -172,32 +163,34 @@ export default function Carousel() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-white p-8 rounded-sm shadow-2xl max-w-md w-full relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-md w-full relative animate-in zoom-in-95 duration-200">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer"><i className="ph ph-x text-xl"></i></button>
             <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingSlide ? "Editar Banner" : "Novo Banner"}</h3>
             <form onSubmit={handleSave} className="space-y-4">
-              <div><label className="block text-xs uppercase font-bold text-gray-600 mb-1">Título Principal</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border p-3 text-sm outline-none focus:border-[var(--color-gold)]" required /></div>
-              <div><label className="block text-xs uppercase font-bold text-gray-600 mb-1">Subtítulo</label><input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className="w-full border p-3 text-sm outline-none focus:border-[var(--color-gold)]" required /></div>
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Título Principal</label>
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Subtítulo</label>
+                <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
+              </div>
               
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Selecionar Imagem do Computador</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem de Fundo</label>
                 <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const base64 = await convertFileToBase64(file);
-                      setImg(base64);
-                    }
-                  }} 
-                  className="w-full border p-2 text-sm outline-none bg-white text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-bold file:bg-[var(--color-dark)] file:text-white hover:file:bg-[var(--color-gold)] cursor-pointer" 
+                  type="url" 
+                  placeholder="https://exemplo.com/banner.jpg"
+                  value={img} 
+                  onChange={(e) => setImg(e.target.value)} 
+                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
+                  required
                 />
-                {img && <img src={img} alt="Preview" className="mt-2 h-24 w-full object-cover rounded shadow" />}
+                {img && <img src={img} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
               </div>
 
-              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition mt-4 cursor-pointer">
+              <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-xl mt-2 cursor-pointer shadow-lg">
                 Salvar Banner
               </button>
             </form>
