@@ -24,9 +24,10 @@ type AppContextType = {
 const CartContext = createContext<AppContextType | undefined>(undefined);
 
 // 📋 LISTA DE E-MAILS AUTORIZADOS A SEREM ADMINISTRADORES
+
 const ADMIN_EMAILS = [
   "guilherme12miguel123@gmail.com",
-  "monica@gmail.com"
+  "monicaesteticista10@gmail.com"
 ];
 
 export function CartProvider({ children }: { children: ReactNode }) {
