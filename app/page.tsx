@@ -1,41 +1,25 @@
-'use client';
-import { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import About from '@/components/About';
 import Services from '@/components/Services';
 import Products from '@/components/Products';
+import About from '@/components/About';
 import Reviews from '@/components/Reviews';
+import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
-import CartSidebar from '@/components/CartSidebar';
+
+// Força a página a ser dinâmica, evitando erros de pré-renderização no build da Vercel
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-            obs.unobserve(entry.target); // Anima uma única vez para fluidez máxima
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <main className="min-h-screen bg-white text-[#1A1A1A]">
-      <CartSidebar />
+    <main className="min-h-screen bg-[var(--color-bg)]">
       <Navbar />
       <Hero />
-      <About />
       <Services />
       <Products />
+      <About />
       <Reviews />
+      <FAQ />
       <Footer />
     </main>
   );
