@@ -9,17 +9,17 @@ const seisCategoriasOficiais = [
   { 
     id: 1, 
     title: "Mechas & Coloração", 
-    ShortDesc: "Técnicas avançadas de iluminação, correção de cor e tonalização.", 
+    shortDesc: "Técnicas avançadas de iluminação, correção de cor e tonalização.", 
     coverImg: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800",
     items: [
-      { id: '1a', name: "Mechas Loiras", price: "540,00", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
-      { id: '1b', name: "Mechas Morena Iluminada", price: "540,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
-      { id: '1c', name: "Mechas inversas com correção", price: "740,00", media: "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=800" },
-      { id: '1d', name: "Escurecimento correção de cor", price: "220,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
-      { id: '1e', name: "Tonalização Morena Iluminada", price: "120,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
-      { id: '1f', name: "Tonalização Loiro", price: "120,00", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
-      { id: '1g', name: "Coloração Raiz", price: "130,00", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
-      { id: '1h', name: "Coloração Inteiro (Necessita avaliação)", price: "A avaliar", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" }
+      { id: '1a', name: "Mechas Loiras", price: "540,00", desc: "Clareamento global com preservação da fibra capilar e tonalização exclusiva.", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
+      { id: '1b', name: "Mechas Morena Iluminada", price: "540,00", desc: "Efeito sutil e sofisticado de luminosidade mantendo a raiz natural.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
+      { id: '1c', name: "Mechas inversas com correção", price: "740,00", desc: "Correção de cor complexa recuperando a profundidade e dimensão dos fios.", media: "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=800" },
+      { id: '1d', name: "Escurecimento correção de cor", price: "220,00", desc: "Retorno seguro a tons mais escuros com uniformização completa.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
+      { id: '1e', name: "Tonalização Morena Iluminada", price: "120,00", desc: "Devolução de brilho e vivacidade para cabelos iluminados.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
+      { id: '1f', name: "Tonalização Loiro", price: "120,00", desc: "Neutralização de reflexos indesejados e selagem das cutículas.", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
+      { id: '1g', name: "Coloração Raiz", price: "130,00", desc: "Retoque de raiz com cobertura perfeita de fios brancos.", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" },
+      { id: '1h', name: "Coloração Inteiro (Necessita avaliação)", price: "A avaliar", desc: "Mudança global de cor com diagnóstico prévio em cabine.", media: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800" }
     ]
   },
   { 
@@ -28,9 +28,9 @@ const seisCategoriasOficiais = [
     shortDesc: "Cuidado especializado para nutrição, transição e definição dos cachos.", 
     coverImg: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800",
     items: [
-      { id: '2a', name: "Cachoterapia modelagem", price: "89,90", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" },
-      { id: '2b', name: "Choque hidratação com ozônio", price: "139,90", media: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800" },
-      { id: '2c', name: "Soltura de cachos", price: "269,90", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" }
+      { id: '2a', name: "Cachoterapia modelagem", price: "89,90", desc: "Tratamento focado na ativação e memorização de curvaturas.", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" },
+      { id: '2b', name: "Choque hidratação com ozônio", price: "139,90", desc: "Potencialização profunda de nutrientes através da ozonioterapia.", media: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800" },
+      { id: '2c', name: "Soltura de cachos", price: "269,90", desc: "Relaxamento suave para harmonia de volume e definição.", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" }
     ]
   },
   { 
@@ -39,9 +39,9 @@ const seisCategoriasOficiais = [
     shortDesc: "Protocolos intensivos com ozonioterapia e blends (acompanha escova).", 
     coverImg: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800",
     items: [
-      { id: '3a', name: "Tratamento Ozonioterapia", price: "179,00", media: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800" },
-      { id: '3b', name: "Tratamento Blend de reconstrução", price: "179,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
-      { id: '3c', name: "Tratamento Hidratação", price: "119,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" }
+      { id: '3a', name: "Tratamento Ozonioterapia", price: "179,00", desc: "Oxigenação capilar e revitalização do couro cabeludo.", media: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800" },
+      { id: '3b', name: "Tratamento Blend de reconstrução", price: "179,00", desc: "Reposição de massa capilar para fios extremamente danificados.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" },
+      { id: '3c', name: "Tratamento Hidratação", price: "119,00", desc: "Devolução de água e maciez imediata aos fios ressecados.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" }
     ]
   },
   { 
@@ -50,11 +50,11 @@ const seisCategoriasOficiais = [
     shortDesc: "Design de corte, styling, penteados, maquiagem e cuidados com a pele.", 
     coverImg: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800",
     items: [
-      { id: '4a', name: "Design de corte", price: "60,00", media: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800" },
-      { id: '4b', name: "Babyliss", price: "60,00", media: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800" },
-      { id: '4c', name: "Maquiagem", price: "130,00", media: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800" },
-      { id: '4d', name: "Penteado", price: "130,00", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" },
-      { id: '4e', name: "Limpeza de pele + Peeling de diamante", price: "140,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" }
+      { id: '4a', name: "Design de corte", price: "60,00", desc: "Corte personalizado de acordo com o formato do rosto e estilo pessoal.", media: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800" },
+      { id: '4b', name: "Babyliss", price: "60,00", desc: "Modelagem com ondas duradouras e acabamento impecável.", media: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800" },
+      { id: '4c', name: "Maquiagem", price: "130,00", desc: "Produção social completa para ocasiões especiais.", media: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800" },
+      { id: '4d', name: "Penteado", price: "130,00", desc: "Penteados sofisticados, semi-presos ou coques estruturados.", media: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800" },
+      { id: '4e', name: "Limpeza de pele + Peeling de diamante", price: "140,00", desc: "Remoção de impurezas e renovação celular facial.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" }
     ]
   },
   { 
@@ -63,12 +63,12 @@ const seisCategoriasOficiais = [
     shortDesc: "Cuidados corporais completos com procedimentos rápidos e confortáveis.", 
     coverImg: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800",
     items: [
-      { id: '5a', name: "Buço", price: "25,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
-      { id: '5b', name: "Axila", price: "25,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
-      { id: '5c', name: "Depilação barriga", price: "35,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
-      { id: '5d', name: "Meia Perna", price: "35,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
-      { id: '5e', name: "Perna Inteira", price: "55,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
-      { id: '5f', name: "Virilha", price: "50,00", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" }
+      { id: '5a', name: "Buço", price: "25,00", desc: "Depilação facial delicada.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
+      { id: '5b', name: "Axila", price: "25,00", desc: "Procedimento rápido com cera adequada.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
+      { id: '5c', name: "Depilação barriga", price: "35,00", desc: "Remoção suave de pelos na região abdominal.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
+      { id: '5d', name: "Meia Perna", price: "35,00", desc: "Depilação prática para pernas.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
+      { id: '5e', name: "Perna Inteira", price: "55,00", desc: "Cuidado completo para pernas.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" },
+      { id: '5f', name: "Virilha", price: "50,00", desc: "Técnica especializada com total discrição e conforto.", media: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800" }
     ]
   },
   { 
@@ -77,29 +77,55 @@ const seisCategoriasOficiais = [
     shortDesc: "Manicure, pedicure, spas especializados e protocolo de brilho Gloss Express.", 
     coverImg: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800",
     items: [
-      { id: '6a', name: "Pedicure / manicure", price: "35,00", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
-      { id: '6b', name: "Pé e Mão Completo", price: "60,00", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
-      { id: '6c', name: "Spa dos pés", price: "75,00", media: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c1?auto=format&fit=crop&w=800" },
-      { id: '6d', name: "Esmaltação", price: "20,00", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
-      { id: '6e', name: "Spa dos pés + unhas de pés", price: "105,00", media: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c1?auto=format&fit=crop&w=800" },
-      { id: '6f', name: "Gloss Express (Raiz 2cm + Escova R$50)", price: "90,00", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" }
+      { id: '6a', name: "Pedicure / manicure", price: "35,00", desc: "Cuidado tradicional para mãos ou pés.", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
+      { id: '6b', name: "Pé e Mão Completo", price: "60,00", desc: "Combo completo de cuidados para unhas.", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
+      { id: '6c', name: "Spa dos pés", price: "75,00", desc: "Esfoliação, hidratação profunda e relaxamento para os pés.", media: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c1?auto=format&fit=crop&w=800" },
+      { id: '6d', name: "Esmaltação", price: "20,00", desc: "Aplicação de esmalte com acabamento profissional.", media: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800" },
+      { id: '6e', name: "Spa dos pés + unhas de pés", price: "105,00", desc: "Tratamento completo relaxante com pedicure inclusa.", media: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c1?auto=format&fit=crop&w=800" },
+      { id: '6f', name: "Gloss Express (Raiz 2cm + Escova R$50)", price: "90,00", desc: "Retoque rápido de raiz aliado a uma escova modeladora.", media: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800" }
     ]
   }
 ];
 
+// Helper para extrair o ID do YouTube de qualquer formato (Watch, Shorts, youtu.be, Embed)
+const extractYoutubeVideoId = (url: string) => {
+  if (!url) return null;
+  let videoId = null;
+  if (url.includes('youtube.com/shorts/')) {
+    const parts = url.split('/shorts/');
+    if (parts[1]) videoId = parts[1].split('?')[0].split('/')[0];
+  } else if (url.includes('youtu.be/')) {
+    const parts = url.split('youtu.be/');
+    if (parts[1]) videoId = parts[1].split('?')[0].split('/')[0];
+  } else {
+    const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+    if (ytMatch && ytMatch[2]?.length === 11) {
+      videoId = ytMatch[2];
+    }
+  }
+  return videoId && videoId.length === 11 ? videoId : null;
+};
+
+// Converte links do YouTube em miniaturas reais para a lista lateral
+const getThumbnailSrc = (url: string) => {
+  if (!url) return '';
+  const videoId = extractYoutubeVideoId(url);
+  if (videoId) {
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  }
+  return url;
+};
+
 const renderMediaContent = (url: string) => {
   if (!url) return null;
 
-  // 1. YouTube
-  const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const ytMatch = url.match(ytRegExp);
-  if (ytMatch && ytMatch[2].length === 11) {
-    const videoId = ytMatch[2];
+  const videoId = extractYoutubeVideoId(url);
+  if (videoId) {
     return (
       <iframe
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
         title="YouTube video player"
-        className="w-full h-full object-cover border-0 pointer-events-none"
+        className="w-full h-full object-cover border-0 z-10 relative"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />
@@ -115,7 +141,7 @@ const renderMediaContent = (url: string) => {
       <iframe
         src={cleanUrl}
         title="Instagram Embed"
-        className="w-full h-full border-0 bg-black"
+        className="w-full h-full border-0 bg-black z-10 relative"
         frameBorder="0"
         scrolling="no"
         allowTransparency={true}
@@ -133,7 +159,7 @@ const renderMediaContent = (url: string) => {
         loop
         muted
         playsInline
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover z-10 relative"
       />
     );
   }
@@ -188,6 +214,7 @@ export default function Services() {
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [itemName, setItemName] = useState('');
   const [itemPrice, setItemPrice] = useState('');
+  const [itemDesc, setItemDesc] = useState('');
   const [itemMedia, setItemMedia] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; type: 'cat' | 'item' | null; id: any; title: string }>({ isOpen: false, type: null, id: null, title: '' });
 
@@ -228,6 +255,7 @@ export default function Services() {
     setEditingItem(null);
     setItemName('');
     setItemPrice('');
+    setItemDesc('');
     setItemMedia('https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800');
     setIsItemModalOpen(true);
   };
@@ -236,6 +264,7 @@ export default function Services() {
     setEditingItem(item);
     setItemName(item.name);
     setItemPrice(item.price);
+    setItemDesc(item.desc || '');
     setItemMedia(item.media || '');
     setIsItemModalOpen(true);
   };
@@ -246,9 +275,9 @@ export default function Services() {
       if (cat.id === selectedCategory.id) {
         let newItems = [...cat.items];
         if (editingItem) {
-          newItems = newItems.map((i: any) => i.id === editingItem.id ? { ...i, name: itemName, price: itemPrice, media: itemMedia } : i);
+          newItems = newItems.map((i: any) => i.id === editingItem.id ? { ...i, name: itemName, price: itemPrice, desc: itemDesc, media: itemMedia } : i);
         } else {
-          newItems.push({ id: Date.now().toString(), name: itemName, price: itemPrice, media: itemMedia });
+          newItems.push({ id: Date.now().toString(), name: itemName, price: itemPrice, desc: itemDesc, media: itemMedia });
         }
         return { ...cat, items: newItems };
       }
@@ -357,13 +386,13 @@ export default function Services() {
               </div>
             )}
 
-            <div className="relative overflow-hidden rounded-lg mb-3 md:mb-5 aspect-[4/3] bg-gray-100 shadow-inner pointer-events-none">
+            <div className="relative overflow-hidden rounded-lg mb-3 md:mb-5 aspect-[4/3] bg-gray-100 shadow-inner">
                 <img 
                   src={category.coverImg} 
                   alt={category.title} 
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-out" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-75 group-hover:opacity-40 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-75 group-hover:opacity-40 transition-opacity pointer-events-none"></div>
 
                 <span className="absolute bottom-2.5 left-2.5 md:bottom-3 md:left-3 bg-white/90 backdrop-blur-md text-[var(--color-dark)] px-2.5 py-0.5 md:px-3 md:py-1 rounded-md text-[9px] md:text-[10px] uppercase font-bold tracking-widest shadow-sm">
                   {category.items?.length || 0} Itens
@@ -407,7 +436,7 @@ export default function Services() {
               {activeMedia ? (
                  <div className="absolute inset-0 w-full h-full">
                    {renderMediaContent(activeMedia)}
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-20"></div>
                  </div>
               ) : (
                  <div className="text-center p-8 z-10">
@@ -416,7 +445,7 @@ export default function Services() {
                  </div>
               )}
 
-              <div className="absolute bottom-6 left-6 right-6 z-20 text-white hidden md:block pointer-events-none">
+              <div className="absolute bottom-6 left-6 right-6 z-30 text-white hidden md:block pointer-events-none">
                 <span className="bg-[var(--color-gold)] text-black px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mb-2 inline-block shadow">
                   Preview em Tempo Real
                 </span>
@@ -475,16 +504,23 @@ export default function Services() {
                         }}
                         className={`cursor-pointer group p-3.5 my-2 rounded-xl transition-all duration-150 touch-manipulation select-none ${isSelected ? 'bg-[var(--color-nude)] border-l-4 border-[var(--color-gold)] shadow-sm' : 'hover:bg-gray-50'}`}
                       >
-                        <div className="flex justify-between items-center w-full gap-4 pointer-events-none">
-                          <div className="flex items-center gap-3">
+                        <div className="flex justify-between items-start w-full gap-4">
+                          <div className="flex items-start gap-3 flex-1">
                             {item.media && (
-                              <img src={item.media} alt="" className="w-10 h-10 rounded-lg object-cover shadow-sm flex-shrink-0" />
+                              <img src={getThumbnailSrc(item.media)} alt="" className="w-10 h-10 rounded-lg object-cover shadow-sm flex-shrink-0 mt-0.5 bg-gray-100" />
                             )}
-                            <span className={`text-sm md:text-base transition-colors ${isSelected ? 'font-bold text-[var(--color-dark)]' : 'font-medium text-gray-700 group-hover:text-black'}`}>
-                              {item.name}
-                            </span>
+                            <div className="flex-1">
+                              <span className={`block text-sm md:text-base transition-colors ${isSelected ? 'font-bold text-[var(--color-dark)]' : 'font-medium text-gray-700 group-hover:text-black'}`}>
+                                {item.name}
+                              </span>
+                              {item.desc && (
+                                <p className="text-xs text-gray-500 font-light mt-0.5 line-clamp-2 leading-relaxed">
+                                  {item.desc}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <span className="font-serif font-bold text-[var(--color-dark)] whitespace-nowrap text-sm md:text-base">
+                          <span className="font-serif font-bold text-[var(--color-dark)] whitespace-nowrap text-sm md:text-base pt-0.5">
                             {item.price.includes('A avaliar') ? item.price : `R$ ${item.price}`}
                           </span>
                         </div>
@@ -556,30 +592,33 @@ export default function Services() {
       {/* Modal de Item (Admin) */}
       {isItemModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full relative">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full relative max-h-[90vh] overflow-y-auto">
             <button onClick={() => setIsItemModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer touch-manipulation">
               <i className="ph ph-x text-xl"></i>
             </button>
             <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingItem ? "Editar Item" : "Novo Item"}</h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Serviço/Item</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Serviço</label>
                 <input type="text" value={itemName} onChange={(e) => setItemName(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (Ex: 540,00 ou A avaliar)</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (Ex: 120,00 ou A avaliar)</label>
                 <input type="text" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Imagem, Vídeo, YouTube ou Instagram)</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Descrição / Resumo do Serviço</label>
+                <textarea value={itemDesc} onChange={(e) => setItemDesc(e.target.value)} rows={2} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition resize-none" placeholder="Explique brevemente os detalhes do procedimento..."></textarea>
+              </div>
+              <div>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Imagem, YouTube Shorts ou Vídeo)</label>
                 <input 
-                  type="text" 
-                  placeholder="https://... (YouTube, Instagram, Imagem ou Vídeo)"
+                  type="url" 
+                  placeholder="https://... ou link do YouTube Shorts"
                   value={itemMedia} 
                   onChange={(e) => setItemMedia(e.target.value)} 
                   className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
                 />
-                {itemMedia && <div className="mt-3 h-24 w-full rounded-lg overflow-hidden shadow-sm bg-black">{renderMediaContent(itemMedia)}</div>}
               </div>
               <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-lg mt-2 cursor-pointer shadow-md touch-manipulation">
                 Salvar Item
@@ -591,28 +630,16 @@ export default function Services() {
 
       {/* Modal de Confirmação de Exclusão */}
       {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative">
-            <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center">
+            <div className="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="ph-fill ph-warning"></i>
             </div>
-            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Confirmar Exclusão</h3>
-            <p className="text-gray-600 text-xs mb-6 leading-relaxed">
-              Tem certeza que deseja excluir <strong>{deleteConfirm.title}</strong>? Esta ação não pode ser desfeita.
-            </p>
+            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Excluir {deleteConfirm.type === 'cat' ? 'Seção' : 'Item'}?</h3>
+            <p className="text-gray-500 text-xs mb-6">Tem certeza que deseja excluir &quot;{deleteConfirm.title}&quot;? Esta ação não poderá ser desfeita.</p>
             <div className="flex gap-3">
-              <button 
-                onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} 
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 uppercase text-[11px] font-bold tracking-wider rounded-xl transition cursor-pointer"
-              >
-                Cancelar
-              </button>
-              <button 
-                onClick={confirmDeleteAction} 
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 uppercase text-[11px] font-bold tracking-wider rounded-xl transition cursor-pointer shadow-md"
-              >
-                Excluir
-              </button>
+              <button onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl uppercase font-bold text-[10px] tracking-widest hover:bg-gray-200 transition">Cancelar</button>
+              <button onClick={confirmDeleteAction} className="flex-1 bg-red-500 text-white py-3 rounded-xl uppercase font-bold text-[10px] tracking-widest hover:bg-red-600 transition">Excluir</button>
             </div>
           </div>
         </div>
