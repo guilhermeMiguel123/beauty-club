@@ -191,7 +191,6 @@ export default function Services() {
   const [itemMedia, setItemMedia] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; type: 'cat' | 'item' | null; id: any; title: string }>({ isOpen: false, type: null, id: null, title: '' });
 
-  // Item selecionado atual (ou o primeiro da lista por padrão)
   const currentItem = selectedCategory?.items?.find((i: any) => i.id === activeItemId) || selectedCategory?.items?.[0];
 
   const handleOpenAddCat = () => {
@@ -558,31 +557,29 @@ export default function Services() {
       {isItemModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full relative">
-            <button onClick={() => setIsItemModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer touch-manipulation"><i className="ph ph-x text-xl"></i></button>
+            <button onClick={() => setIsItemModalOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-black cursor-pointer touch-manipulation">
+              <i className="ph ph-x text-xl"></i>
+            </button>
             <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">{editingItem ? "Editar Item" : "Novo Item"}</h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Procedimento</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Nome do Serviço/Item</label>
                 <input type="text" value={itemName} onChange={(e) => setItemName(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (R$)</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Preço (Ex: 540,00 ou A avaliar)</label>
                 <input type="text" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Foto, YouTube, Instagram ou Vídeo)</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Mídia (Imagem, Vídeo, YouTube ou Instagram)</label>
                 <input 
                   type="text" 
-                  placeholder="Cole o link do YouTube, Instagram, vídeo direto ou imagem"
+                  placeholder="https://... (YouTube, Instagram, Imagem ou Vídeo)"
                   value={itemMedia} 
                   onChange={(e) => setItemMedia(e.target.value)} 
                   className="w-full border border-gray-200 rounded-lg p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
                 />
-                {itemMedia && (
-                  <div className="mt-3 h-28 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                    {renderMediaContent(itemMedia)}
-                  </div>
-                )}
+                {itemMedia && <div className="mt-3 h-24 w-full rounded-lg overflow-hidden shadow-sm bg-black">{renderMediaContent(itemMedia)}</div>}
               </div>
               <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-lg mt-2 cursor-pointer shadow-md touch-manipulation">
                 Salvar Item
@@ -594,27 +591,27 @@ export default function Services() {
 
       {/* Modal de Confirmação de Exclusão */}
       {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative">
-            <div className="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+            <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
               <i className="ph-fill ph-warning"></i>
             </div>
-            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Excluir {deleteConfirm.type === 'cat' ? 'Seção' : 'Item'}?</h3>
-            <p className="text-gray-500 text-xs mb-6">
-              Tem certeza que deseja excluir &quot;<span className="font-semibold text-gray-700">{deleteConfirm.title}</span>&quot;? Esta ação não pode ser desfeita.
+            <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Confirmar Exclusão</h3>
+            <p className="text-gray-600 text-xs mb-6 leading-relaxed">
+              Tem certeza que deseja excluir <strong>{deleteConfirm.title}</strong>? Esta ação não pode ser desfeita.
             </p>
             <div className="flex gap-3">
               <button 
                 onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} 
-                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition cursor-pointer touch-manipulation"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 uppercase text-[11px] font-bold tracking-wider rounded-xl transition cursor-pointer"
               >
                 Cancelar
               </button>
               <button 
                 onClick={confirmDeleteAction} 
-                className="flex-1 bg-red-500 text-white py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-red-600 transition cursor-pointer shadow-md touch-manipulation"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 uppercase text-[11px] font-bold tracking-wider rounded-xl transition cursor-pointer shadow-md"
               >
-                Sim, Excluir
+                Excluir
               </button>
             </div>
           </div>

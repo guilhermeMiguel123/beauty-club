@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
@@ -115,10 +116,19 @@ export default function Products() {
     }, 2000); 
   };
 
-  // Categorias dinâmicas extraídas dos produtos
+  // Categorias dinâmicas extraídas e normalizadas dos produtos (evita duplicatas por casing/espaço)
   const categories = useMemo(() => {
-    const cats = products.map((p: any) => p.category);
-    return ['Todos', ...Array.from(new Set(cats))];
+    const map = new Map();
+    products.forEach((p: any) => {
+      const trimmed = p.category?.trim();
+      if (trimmed) {
+        const lowerKey = trimmed.toLowerCase();
+        if (!map.has(lowerKey)) {
+          map.set(lowerKey, trimmed);
+        }
+      }
+    });
+    return ['Todos', ...map.values()];
   }, [products]);
 
   // Produtos filtrados por busca e categoria
@@ -126,7 +136,10 @@ export default function Products() {
     return products.filter((product: any) => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             product.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
+      
+      const matchesCategory = selectedCategory === 'Todos' || 
+                              product.category?.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
+      
       return matchesSearch && matchesCategory;
     });
   }, [products, searchTerm, selectedCategory]);
