@@ -150,9 +150,7 @@ export default function LinksTreePage() {
         {/* Bloco "Sobre Mim" Detalhado */}
         <div className="w-full bg-white/80 border border-amber-900/10 rounded-2xl p-5 shadow-sm backdrop-blur-sm mb-8 text-center">
           <h2 className="text-xs uppercase tracking-widest text-amber-800 font-semibold mb-2">A Nossa Essência</h2>
-          <p className="text-sm text-neutral-700 leading-relaxed font-light mb-3">
-            Criado para mulheres que não abrem mão de excelência, o <strong className="font-medium text-neutral-900">Beauty Club</strong> redefine o conceito de estética e cuidado pessoal em um ambiente sofisticado e acolhedor.
-          </p>
+      
           <p className="text-xs text-neutral-600 leading-relaxed font-light">
             Sob a liderança de Mônica Monteiro, unimos técnicas avançadas em visagismo, tratamento capilar de alta performance e estética refinada para realçar a sua identidade natural com total segurança. ✨
           </p>
