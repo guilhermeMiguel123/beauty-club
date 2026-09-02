@@ -60,7 +60,10 @@ export default function Footer() {
                   Residencial Vale do Sol<br/>
                   Anápolis - GO, 75085-697
                 </a>
-                <span className="text-[10px] uppercase tracking-widest text-[var(--color-gold)] mt-2 block font-bold"> <p><span>Segunda-feira, das 13h às 18h</span> </p>Terça-feira a sábado, das 07h às 18h.</span>
+                <span className="text-[10px] uppercase tracking-widest text-[var(--color-gold)] mt-2 block font-bold">
+                   Segunda-feira: das 13h às 18h<br />
+                   Terça a sábado: das 07h às 18h • Anápolis, GO
+                </span>
               </div>
             </li>
           </ul>
