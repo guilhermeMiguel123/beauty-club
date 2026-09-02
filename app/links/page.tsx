@@ -140,7 +140,20 @@ export default function LinksTreePage() {
           Beauty Club • Anápolis
         </p>
 
+<<<<<<< HEAD
         {/* Lista de Links Estilo Clean Minimalista */}
+=======
+        {/* Bloco "Sobre Mim" Detalhado */}
+        <div className="w-full bg-white/80 border border-amber-900/10 rounded-2xl p-5 shadow-sm backdrop-blur-sm mb-8 text-center">
+          <h2 className="text-xs uppercase tracking-widest text-amber-800 font-semibold mb-2">A Nossa Essência</h2>
+      
+          <p className="text-xs text-neutral-600 leading-relaxed font-light">
+            Sob a liderança de Mônica Monteiro, unimos técnicas avançadas em visagismo, tratamento capilar de alta performance e estética refinada para realçar a sua identidade natural com total segurança. ✨
+          </p>
+        </div>
+
+        {/* Lista de Links com Hover Dourado */}
+>>>>>>> 86d841426a27b2a250f59e1a59074164747a56c8
         <div className="w-full flex flex-col gap-3.5">
           {loading ? (
             <div className="flex flex-col gap-3 w-full">
