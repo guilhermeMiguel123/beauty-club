@@ -103,62 +103,44 @@ export default function LinksTreePage() {
   const renderIcon = (type?: string) => {
     switch (type) {
       case 'whatsapp':
-        return <MessageCircle className="w-5 h-5 text-emerald-600 group-hover:text-neutral-950 transition-colors" />;
+        return <MessageCircle className="w-5 h-5 text-emerald-600 transition-colors" />;
       case 'instagram':
-        return <InstagramIcon className="w-5 h-5 text-rose-600 group-hover:text-neutral-950 transition-colors" />;
+        return <InstagramIcon className="w-5 h-5 text-rose-600 transition-colors" />;
       case 'map':
-        return <MapPin className="w-5 h-5 text-amber-700 group-hover:text-neutral-950 transition-colors" />;
+        return <MapPin className="w-5 h-5 text-amber-700 transition-colors" />;
       case 'globe':
-        return <Globe className="w-5 h-5 text-sky-600 group-hover:text-neutral-950 transition-colors" />;
+        return <Globe className="w-5 h-5 text-sky-600 transition-colors" />;
       default:
-        return <Scissors className="w-5 h-5 text-amber-700 group-hover:text-neutral-950 transition-colors" />;
+        return <Scissors className="w-5 h-5 text-amber-700 transition-colors" />;
     }
   };
 
   return (
     <main className="relative min-h-screen bg-[#f9f6f0] text-neutral-900 flex flex-col items-center justify-between py-12 px-4 sm:px-6 selection:bg-amber-200 selection:text-neutral-900">
       
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-amber-200/30 via-amber-100/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         
-        {/* Foto da Mônica no topo */}
-        <div className="relative group mb-6">
-          <div className="absolute -inset-1.5 bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-200 rounded-full blur-sm opacity-70 group-hover:opacity-100 transition duration-500" />
-          <div className="relative w-32 h-32 rounded-full overflow-hidden p-1 bg-[#f9f6f0] shadow-xl">
-            <div className="relative w-full h-full rounded-full overflow-hidden bg-neutral-200">
-              <Image 
-                src="/monica.png" 
-                alt="Mônica Monteiro - Founder & Master Stylist"
-                fill
-                className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                priority
-              />
-            </div>
-          </div>
+        {/* Foto limpa sem brilho/aura */}
+        <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-amber-900/15 shadow-md mb-4 bg-neutral-200">
+          <Image 
+            src="/monica.jpg" 
+            alt="Mônica Monteiro - Founder & Master Stylist"
+            fill
+            className="object-cover object-top"
+            priority
+          />
         </div>
 
         <div className="flex items-center gap-1.5 mb-1">
-          <h1 className="text-2xl font-serif font-bold tracking-tight text-neutral-900 text-center">Mônica Monteiro</h1>
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-neutral-900 text-center">@monicamonteiro</h1>
           <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
         </div>
 
-        <p className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold mb-6">
-          Fundadora & Master Stylist • Beauty Club
+        <p className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold mb-8">
+          Beauty Club • Anápolis
         </p>
 
-        {/* Bloco "Sobre Mim" Detalhado */}
-        <div className="w-full bg-white/80 border border-amber-900/10 rounded-2xl p-5 shadow-sm backdrop-blur-sm mb-8 text-center">
-          <h2 className="text-xs uppercase tracking-widest text-amber-800 font-semibold mb-2">A Nossa Essência</h2>
-          <p className="text-sm text-neutral-700 leading-relaxed font-light mb-3">
-            Criado para mulheres que não abrem mão de excelência, o <strong className="font-medium text-neutral-900">Beauty Club</strong> redefine o conceito de estética e cuidado pessoal em um ambiente sofisticado e acolhedor.
-          </p>
-          <p className="text-xs text-neutral-600 leading-relaxed font-light">
-            Sob a liderança de Mônica Monteiro, unimos técnicas avançadas em visagismo, tratamento capilar de alta performance e estética refinada para realçar a sua identidade natural com total segurança. ✨
-          </p>
-        </div>
-
-        {/* Lista de Links com Hover Dourado */}
+        {/* Lista de Links Estilo Clean Minimalista */}
         <div className="w-full flex flex-col gap-3.5">
           {loading ? (
             <div className="flex flex-col gap-3 w-full">
@@ -173,17 +155,17 @@ export default function LinksTreePage() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative w-full p-4 bg-white hover:bg-amber-100/70 border border-amber-900/15 hover:border-amber-500 rounded-2xl font-medium text-center transition-all duration-300 flex items-center justify-between shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                className="group relative w-full p-4 bg-white hover:bg-amber-100/70 border border-amber-900/15 hover:border-amber-300 rounded-2xl font-medium text-center transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md hover:-translate-y-0.5"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[#f9f6f0] group-hover:bg-amber-300 border border-amber-900/10 group-hover:border-amber-400 transition-colors">
+                  <div className="p-2.5 rounded-xl bg-[#f9f6f0] group-hover:bg-amber-200/60 border border-amber-900/10 group-hover:border-amber-300 transition-colors">
                     {renderIcon(link.iconType)}
                   </div>
                   <span className="text-sm sm:text-base font-medium tracking-wide text-neutral-800 group-hover:text-neutral-950 transition-colors text-left">
                     {link.title}
                   </span>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-[#f9f6f0] group-hover:bg-neutral-950 group-hover:text-amber-300 flex items-center justify-center border border-amber-900/10 group-hover:border-neutral-950 transition-all text-neutral-500">
+                <div className="w-8 h-8 rounded-full bg-[#f9f6f0] group-hover:bg-amber-300 group-hover:text-neutral-950 flex items-center justify-center border border-amber-900/10 group-hover:border-amber-300 transition-all text-neutral-500">
                   <ExternalLink className="w-4 h-4" />
                 </div>
               </a>
