@@ -122,7 +122,7 @@ export default function LinksTreePage() {
         {/* Foto limpa e sem brilho em volta */}
         <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-amber-900/15 shadow-md mb-4 bg-neutral-200">
           <Image 
-            src="/monica.jpg" 
+            src="/monica.png" 
             alt="Mônica Monteiro - Founder & Master Stylist"
             fill
             className="object-cover object-top"
