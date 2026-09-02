@@ -61,8 +61,8 @@ export default function Footer() {
                   Anápolis - GO, 75085-697
                 </a>
                 <span className="text-[10px] uppercase tracking-widest text-[var(--color-gold)] mt-2 block font-bold">
-                   Segunda-feira: das 13h às 18h<br />
-                   Terça a sábado: das 07h às 18h • Anápolis, GO
+                   Segunda-feira: das 13h às 18h<br /> <br />
+                   Terça a sábado: das 07h às 18h 
                 </span>
               </div>
             </li>
