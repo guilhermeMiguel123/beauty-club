@@ -103,11 +103,11 @@ export default function About() {
       
 <div className="space-y-4 text-gray-600 font-light text-sm md:text-lg leading-relaxed mb-8">
   <p>
-    Como cabeleireira com <strong className="font-medium text-[var(--color-dark)]">mais de 17 anos de experiência na área da beleza</strong>, tenho a honra de compartilhar todas as minhas características profissionais e pessoais.
+    Como cabeleireira com <strong className="font-medium text-[var(--color-dark)]">mais de 18 anos de experiência na área da beleza</strong>, tenho a honra de compartilhar todas as minhas características profissionais e pessoais.
   </p>
 
   <p>
-    Meu nome é Mônica Monteiro e sou apaixonada por ajudar meus clientes a realçar sua beleza natural. Minha primeira graduação foi em História, na área da educação. Logo em seguida percebi que meu dom estava em realçar a beleza de vocês. Então me graduei em Estética e Cosmética e desde então passo o meu tempo me aperfeiçoando para trazer o melhor pra vocês 🤍
+    Meu nome é Mônica Monteiro e sou apaixonada por ajudar meus clientes a realçar sua beleza natural. Minha primeira graduação foi em História, na área da educação. Logo em seguida percebi que meu dom estava em realçar a beleza de vocês. Então me graduei em Estética e Cosmética e desde então passo o meu tempo me aperfeiçoando para trazer o melhor pra vocês 
   </p>
 
   <p>
