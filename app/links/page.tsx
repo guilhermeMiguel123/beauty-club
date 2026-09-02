@@ -10,7 +10,6 @@ import {
   Globe, 
   Scissors, 
   ExternalLink, 
-  Sparkles, 
   Clock 
 } from 'lucide-react';
 
@@ -120,8 +119,8 @@ export default function LinksTreePage() {
       
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         
-        {/* Foto limpa sem brilho/aura */}
-        <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-amber-900/15 shadow-md mb-4 bg-neutral-200">
+        {/* Foto limpa e sem brilho em volta */}
+        <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-amber-900/15 shadow-md mb-4 bg-neutral-200">
           <Image 
             src="/monica.jpg" 
             alt="Mônica Monteiro - Founder & Master Stylist"
@@ -133,27 +132,13 @@ export default function LinksTreePage() {
 
         <div className="flex items-center gap-1.5 mb-1">
           <h1 className="text-2xl font-serif font-bold tracking-tight text-neutral-900 text-center">@monicamonteiro</h1>
-          <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
         </div>
 
         <p className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold mb-8">
           Beauty Club • Anápolis
         </p>
 
-<<<<<<< HEAD
-        {/* Lista de Links Estilo Clean Minimalista */}
-=======
-        {/* Bloco "Sobre Mim" Detalhado */}
-        <div className="w-full bg-white/80 border border-amber-900/10 rounded-2xl p-5 shadow-sm backdrop-blur-sm mb-8 text-center">
-          <h2 className="text-xs uppercase tracking-widest text-amber-800 font-semibold mb-2">A Nossa Essência</h2>
-      
-          <p className="text-xs text-neutral-600 leading-relaxed font-light">
-            Sob a liderança de Mônica Monteiro, unimos técnicas avançadas em visagismo, tratamento capilar de alta performance e estética refinada para realçar a sua identidade natural com total segurança. ✨
-          </p>
-        </div>
-
-        {/* Lista de Links com Hover Dourado */}
->>>>>>> 86d841426a27b2a250f59e1a59074164747a56c8
+        {/* Lista de Links Minimalista */}
         <div className="w-full flex flex-col gap-3.5">
           {loading ? (
             <div className="flex flex-col gap-3 w-full">
