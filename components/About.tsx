@@ -103,11 +103,18 @@ export default function About() {
               
             <div className="space-y-4 text-gray-600 font-light text-sm md:text-lg leading-relaxed mb-8">
               <p>
-                Criado para mulheres que não abrem mão de excelência, o <strong className="font-medium text-[var(--color-dark)]">Beauty Club</strong> redefine o conceito de estética e cuidado pessoal em um ambiente sofisticado e acolhedor.
+               Como cabeleireira com mais de ,  <strong className="font-medium text-[var(--color-dark)]">18 anos de experiência na área da beleza</strong> tenho a honra de compartilhar todas as minhas características profissionais e pessoais.
               </p>
-              <p>
-                Sob a liderança de Mônica Monteiro, unimos técnicas avançadas em visagismo, tratamento capilar de alta performance e estética refinada para realçar a sua identidade natural com total segurança.
-              </p>
+
+              <p>Meu nome é Mônica Monteiro e sou apaixonada por ajudar meus clientes a realçar sua beleza natural. Minha primeira graduação foi em História, na área da educação. Logo em seguida percebi que meu dom estava em realçar a beleza de vocês. Então me graduei em Estética e Cosmética e desde então passo o meu tempo me aperfeiçoando para trazer o melhor pra vocês 🤍</p>
+
+                <p>Com um olho treinado para as últimas tendências e técnicas, estou comprometida em proporcionar resultados excepcionais a cada pessoa que passa pela minha cadeira.</p>
+
+                <p>Além disso, valorizo a comunicação aberta e o atendimento personalizado, garantindo que cada cliente se sinta especial e satisfeito com os serviços prestados.</p>
+                
+
+                <p>Com dedicação e habilidade, busco sempre aprimorar meu trabalho e oferecer experiências únicas em cuidados com os cabelos e beleza.</p>
+              
             </div>
 
             {/* Selos de Qualidade em Grid Interno */}

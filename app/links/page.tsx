@@ -175,7 +175,9 @@ export default function LinksTreePage() {
           <Clock className="w-5 h-5 text-amber-700 shrink-0" />
           <div>
             <p className="font-medium text-neutral-800">Horário de Atendimento</p>
-            <p>Terça a Sábado das 09:00 às 18:30 • Anápolis, GO</p>
+            <p>Segunda-feira, das 13h às 18h.
+
+Terça-feira a sábado, das 07h às 18h. • Anápolis, GO</p>
           </div>
         </div>
 
