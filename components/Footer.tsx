@@ -10,16 +10,18 @@ export default function Footer() {
         
         {/* Coluna 1: Branding (Agora ocupa mais espaço sem a newsletter) */}
         <div className="col-span-1 md:col-span-6">
-          <h3 className="font-serif text-3xl mb-6 text-white tracking-wide">BEAUTY CLUB</h3>
-          <p className="text-gray-400 font-light text-sm leading-relaxed mb-8 pr-0 md:pr-10">
-            Um espaço criado para mulheres que valorizam beleza, cuidado e autoestima.
-            Aqui, cada atendimento é pensado de forma personalizada para proporcionar uma experiência leve, acolhedora e sofisticada.
-
-            Especialistas em mechas, cachoterapia, gloss express, tratamentos capilares, cortes, design de sobrancelhas, unhas e muito mais, trabalhamos para realçar sua beleza com técnica, cuidado e naturalidade.
-
-            Sinta-se em casa no espaço que foi preparado para cuidar de você.
-            Agende seu horário pelo link da bio e venha viver a experiência Beauty Club. menos
-          </p>
+        <h3 className="font-serif text-3xl mb-6 text-white tracking-wide">BEAUTY CLUB</h3>
+<div className="text-gray-400 font-light text-sm leading-relaxed mb-8 pr-0 md:pr-10 space-y-4">
+  <p>
+    Um espaço criado para mulheres que valorizam beleza, cuidado e autoestima. Aqui, cada atendimento é pensado de forma personalizada para proporcionar uma experiência leve, acolhedora e sofisticada.
+  </p>
+  <p>
+    Especialistas em mechas, cachoterapia, gloss express, tratamentos capilares, cortes, design de sobrancelhas, unhas e muito mais, trabalhamos para realçar sua beleza com técnica, cuidado e naturalidade.
+  </p>
+  <p>
+    Sinta-se em casa no espaço que foi preparado para cuidar de você. Agende seu horário pelo link da bio e venha viver a experiência Beauty Club.
+  </p>
+</div>
           <div className="flex gap-6 text-2xl">
             <a href="https://www.instagram.com/p/DYDhyLGiH9y/?img_index=5&igsh=dzRuNm04ejg2enlo&igsi=dzRuNm04ejg2enlo" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition transform hover:scale-110"><i className="ph ph-instagram-logo"></i></a>
             <a href="#" className="text-gray-400 hover:text-white transition transform hover:scale-110"><i className="ph ph-tiktok-logo"></i></a>

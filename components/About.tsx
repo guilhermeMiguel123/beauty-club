@@ -90,32 +90,38 @@ export default function About() {
           {/* LADO DO TEXTO: Editorial de Alto Padrão */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
             
-            <div className="flex items-center gap-3 mb-4">
-              <span className="h-[1px] w-10 bg-[var(--color-gold)]"></span>
-              <span className="uppercase tracking-[0.3em] text-[var(--color-gold)] text-xs font-bold">
-                A Nossa Essência
-              </span>
-            </div>
-              
-            <h2 className="text-3xl md:text-5xl font-serif text-[var(--color-dark)] leading-tight mb-6">
-              Elevando sua autoestima com <span className="italic text-[var(--color-gold)]">exclusividade.</span>
-            </h2>
-              
-            <div className="space-y-4 text-gray-600 font-light text-sm md:text-lg leading-relaxed mb-8">
-              <p>
-               Como cabeleireira com mais de ,  <strong className="font-medium text-[var(--color-dark)]">18 anos de experiência na área da beleza</strong> tenho a honra de compartilhar todas as minhas características profissionais e pessoais.
-              </p>
+        <div className="flex items-center gap-3 mb-4">
+  <span className="h-[1px] w-10 bg-[var(--color-gold)]"></span>
+  <span className="uppercase tracking-[0.3em] text-[var(--color-gold)] text-xs font-bold">
+    A Nossa Essência
+  </span>
+</div>
+      
+<h2 className="text-3xl md:text-5xl font-serif text-[var(--color-dark)] leading-tight mb-6">
+  Elevando sua autoestima com <span className="italic text-[var(--color-gold)]">exclusividade.</span>
+</h2>
+      
+<div className="space-y-4 text-gray-600 font-light text-sm md:text-lg leading-relaxed mb-8">
+  <p>
+    Como cabeleireira com <strong className="font-medium text-[var(--color-dark)]">mais de 17 anos de experiência na área da beleza</strong>, tenho a honra de compartilhar todas as minhas características profissionais e pessoais.
+  </p>
 
-              <p>Meu nome é Mônica Monteiro e sou apaixonada por ajudar meus clientes a realçar sua beleza natural. Minha primeira graduação foi em História, na área da educação. Logo em seguida percebi que meu dom estava em realçar a beleza de vocês. Então me graduei em Estética e Cosmética e desde então passo o meu tempo me aperfeiçoando para trazer o melhor pra vocês 🤍</p>
+  <p>
+    Meu nome é Mônica Monteiro e sou apaixonada por ajudar meus clientes a realçar sua beleza natural. Minha primeira graduação foi em História, na área da educação. Logo em seguida percebi que meu dom estava em realçar a beleza de vocês. Então me graduei em Estética e Cosmética e desde então passo o meu tempo me aperfeiçoando para trazer o melhor pra vocês 🤍
+  </p>
 
-                <p>Com um olho treinado para as últimas tendências e técnicas, estou comprometida em proporcionar resultados excepcionais a cada pessoa que passa pela minha cadeira.</p>
+  <p>
+    Com um olho treinado para as últimas tendências e técnicas, estou comprometida em proporcionar resultados excepcionais a cada pessoa que passa pela minha cadeira.
+  </p>
 
-                <p>Além disso, valorizo a comunicação aberta e o atendimento personalizado, garantindo que cada cliente se sinta especial e satisfeito com os serviços prestados.</p>
-                
+  <p>
+    Além disso, valorizo a comunicação aberta e o atendimento personalizado, garantindo que cada cliente se sinta especial e satisfeito com os serviços prestados.
+  </p>
 
-                <p>Com dedicação e habilidade, busco sempre aprimorar meu trabalho e oferecer experiências únicas em cuidados com os cabelos e beleza.</p>
-              
-            </div>
+  <p>
+    Com dedicação e habilidade, busco sempre aprimorar meu trabalho e oferecer experiências únicas em cuidados com os cabelos e beleza.
+  </p>
+</div>
 
             {/* Selos de Qualidade em Grid Interno */}
             <div className="grid grid-cols-2 gap-4 mb-8 py-5 border-y border-[var(--color-nude)]">

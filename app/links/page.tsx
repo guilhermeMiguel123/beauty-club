@@ -171,15 +171,16 @@ export default function LinksTreePage() {
           )}
         </div>
 
-        <div className="w-full mt-6 p-4 rounded-2xl bg-white/50 border border-amber-900/10 backdrop-blur-sm flex items-center gap-3 text-neutral-600 text-xs">
-          <Clock className="w-5 h-5 text-amber-700 shrink-0" />
-          <div>
-            <p className="font-medium text-neutral-800">Horário de Atendimento</p>
-            <p>Segunda-feira, das 13h às 18h.
-
-Terça-feira a sábado, das 07h às 18h. • Anápolis, GO</p>
-          </div>
-        </div>
+       <div className="w-full mt-6 p-4 rounded-2xl bg-white/50 border border-amber-900/10 backdrop-blur-sm flex items-center gap-3 text-neutral-600 text-xs">
+  <Clock className="w-5 h-5 text-amber-700 shrink-0" />
+  <div>
+    <p className="font-medium text-neutral-800">Horário de Atendimento</p>
+    <p className="leading-relaxed">
+      Segunda-feira: das 13h às 18h<br />
+      Terça a sábado: das 07h às 18h • Anápolis, GO
+    </p>
+  </div>
+</div>
 
       </div>
 
