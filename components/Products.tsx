@@ -1,9 +1,11 @@
+// Componente Products atualizado com remoção do input de URL
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import ImagePickerModal from '@/components/ImagePickerModal';
 
 const initialProducts = [
   {
@@ -68,8 +70,9 @@ export default function Products() {
   // Estado para feedback visual de produto adicionado
   const [addedId, setAddedId] = useState<number | null>(null);
 
-  // Estados do Modal e Exclusão
+  // Estados do Modal, Exclusão e Image Picker
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -107,7 +110,6 @@ export default function Products() {
     }
   };
 
-  // Função para adicionar ao carrinho mantendo o usuário na página e dando feedback visual
   const handleAddToCart = (product: any) => {
     addToCart(product);
     setAddedId(product.id);
@@ -116,7 +118,6 @@ export default function Products() {
     }, 2000); 
   };
 
-  // Categorias dinâmicas extraídas e normalizadas dos produtos (evita duplicatas por casing/espaço)
   const categories = useMemo(() => {
     const map = new Map();
     products.forEach((p: any) => {
@@ -131,20 +132,18 @@ export default function Products() {
     return ['Todos', ...map.values()];
   }, [products]);
 
-  // Produtos filtrados por busca e categoria
   const filteredProducts = useMemo(() => {
     return products.filter((product: any) => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            product.category.toLowerCase().includes(searchTerm.toLowerCase());
+                          product.category.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCategory = selectedCategory === 'Todos' || 
-                              product.category?.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
+                            product.category?.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
       
       return matchesSearch && matchesCategory;
     });
   }, [products, searchTerm, selectedCategory]);
 
-  // Função para calcular as parcelas em até 3x automaticamente com base no preço atual
   const getInstallmentText = (priceStr: string) => {
     const cleanNum = parseFloat(priceStr.replace(',', '.')) || 0;
     if (cleanNum <= 0) return null;
@@ -174,11 +173,15 @@ export default function Products() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!img) {
+      alert("Por favor, selecione uma imagem da galeria.");
+      return;
+    }
     if (editingProduct) {
       const updated = products.map((p: any) => p.id === editingProduct.id ? { ...p, name, price, oldPrice, category, img } : p);
       await saveToFirebase(updated);
     } else {
-      const newProd = { id: Date.now(), name, price, oldPrice, category, img: img || 'https://images.unsplash.com/photo-1608248597359-994b5952b654?auto=format&fit=crop&w=800' };
+      const newProd = { id: Date.now(), name, price, oldPrice, category, img };
       await saveToFirebase([...products, newProd]);
     }
     setIsModalOpen(false);
@@ -216,7 +219,6 @@ export default function Products() {
         )}
       </div>
 
-      {/* Barra de Pesquisa e Filtros de Categoria */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
@@ -253,7 +255,6 @@ export default function Products() {
         </div>
       </div>
 
-      {/* Grid de Produtos */}
       <div className="max-w-7xl mx-auto px-2 md:px-8 grid grid-cols-3 md:grid-cols-4 gap-2.5 md:gap-8">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product: any, index: number) => {
@@ -277,7 +278,6 @@ export default function Products() {
                   </div>
                 )}
 
-                {/* Tag de Oferta */}
                 {hasOffer && (
                   <span className="absolute top-2 left-2 z-20 bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px] md:text-[9px] uppercase font-bold tracking-widest shadow-sm">
                     Oferta
@@ -314,7 +314,6 @@ export default function Products() {
                       </span>
                     </div>
 
-                    {/* Parcelamento automático em até 3x */}
                     {installmentText && (
                       <span className="text-[9px] md:text-[11px] text-gray-500 font-medium">
                         {installmentText}
@@ -344,7 +343,6 @@ export default function Products() {
         )}
       </div>
 
-      {/* Modal de Adicionar/Editar Produto */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-md w-full relative animate-in zoom-in-95 duration-200">
@@ -370,16 +368,27 @@ export default function Products() {
                 <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition" required />
               </div>
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem</label>
-                <input 
-                  type="url" 
-                  placeholder="https://exemplo.com/produto.jpg"
-                  value={img} 
-                  onChange={(e) => setImg(e.target.value)} 
-                  className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
-                  required
-                />
-                {img && <img src={img} alt="Preview" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Imagem do Produto</label>
+                
+                <button
+                  type="button"
+                  onClick={() => setIsImagePickerOpen(true)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer mb-2"
+                >
+                  <i className="ph ph-images text-base text-[var(--color-gold)]"></i>
+                  Escolher da Galeria do Sistema
+                </button>
+
+                {img ? (
+                  <div className="relative mt-2">
+                    <img src={img} alt="Preview" className="h-28 w-full object-cover rounded-xl shadow-md bg-gray-100 border border-gray-200" />
+                    <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md backdrop-blur-sm truncate max-w-[90%]">
+                      {img}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-xs text-red-500 mt-1">Nenhuma imagem selecionada.</div>
+                )}
               </div>
               <button type="submit" className="w-full bg-[var(--color-dark)] text-white py-4 uppercase text-xs font-bold tracking-widest hover:bg-[var(--color-gold)] transition rounded-xl mt-2 cursor-pointer shadow-lg">
                 Salvar Produto
@@ -389,7 +398,13 @@ export default function Products() {
         </div>
       )}
 
-      {/* Modal de Exclusão */}
+      <ImagePickerModal
+        isOpen={isImagePickerOpen}
+        onClose={() => setIsImagePickerOpen(false)}
+        onSelect={(selectedUrl) => setImg(selectedUrl)}
+        defaultFolder="products"
+      />
+
       {deleteConfirm.isOpen && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center relative animate-in zoom-in-95 duration-200">

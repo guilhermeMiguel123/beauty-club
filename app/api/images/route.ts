@@ -5,24 +5,20 @@ import path from 'path';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const folder = searchParams.get('folder') || 'produtos';
+  const folder = searchParams.get('folder') || 'products';
 
-  // Mapeia os nomes enviados pelo front-end para as pastas reais que existem no projeto
   const allowedFolders: Record<string, string> = {
-    produtos: 'images/produtos',
-    products: 'images/produtos', // Aceita caso algum componente chame em inglês
+    products: 'images/products',
     carousel: 'images/carousel',
-    carrossel: 'images/carousel', // Aceita com dois 'r's do carrossel.tsx
     services: 'images/services',
-    servicos: 'images/services',  // Aceita em português caso use no futuro
   };
 
-  const targetDir = allowedFolders[folder] || 'images/produtos';
+  const targetDir = allowedFolders[folder] || allowedFolders.products;
   const fullPath = path.join(process.cwd(), 'public', targetDir);
 
   try {
     if (!fs.existsSync(fullPath)) {
-      return NextResponse.json([]);
+      return NextResponse.json({ images: [] });
     }
 
     const files = fs.readdirSync(fullPath);
@@ -31,8 +27,7 @@ export async function GET(request: Request) {
       .filter((file) => imageExtensions.includes(path.extname(file).toLowerCase()))
       .map((file) => `/${targetDir}/${file}`);
 
-    // Retorna um array puro para que funções como Array.isArray() e .map() funcionem no front-end
-    return NextResponse.json(images);
+    return NextResponse.json({ images });
   } catch (error) {
     return NextResponse.json({ error: 'Erro ao listar imagens' }, { status: 500 });
   }

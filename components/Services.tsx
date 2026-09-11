@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import ImagePickerModal from '@/components/ImagePickerModal';
 
 const seisCategoriasOficiais = [
   { 
@@ -167,6 +168,10 @@ export default function Services() {
   const [services, setServices] = useState(seisCategoriasOficiais);
   const [isMounted, setIsMounted] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+
+  // Estados para os Modais de ImagePicker
+  const [isCatImagePickerOpen, setIsCatImagePickerOpen] = useState(false);
+  const [isItemImagePickerOpen, setIsItemImagePickerOpen] = useState(false);
 
   // Efeito de Paralaxe no Scroll
   useEffect(() => {
@@ -548,12 +553,12 @@ export default function Services() {
 
                         {isAdmin && (
                           <div className="flex gap-4 mt-3 pt-2.5 border-t border-gray-200/50" onClick={(e) => e.stopPropagation()}>
-                             <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation transition">
-                                <i className="ph-fill ph-pencil-simple text-xs"></i> Editar
-                             </button>
-                             <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation transition">
-                                <i className="ph-fill ph-trash text-xs"></i> Excluir
-                             </button>
+                            <button onClick={() => handleOpenEditItem(item)} className="text-gray-400 hover:text-[var(--color-gold)] text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation transition">
+                              <i className="ph-fill ph-pencil-simple text-xs"></i> Editar
+                            </button>
+                            <button onClick={() => setDeleteConfirm({ isOpen: true, type: 'item', id: item.id, title: item.name })} className="text-gray-400 hover:text-red-500 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1 cursor-pointer touch-manipulation transition">
+                              <i className="ph-fill ph-trash text-xs"></i> Excluir
+                            </button>
                           </div>
                         )}
                       </div>
@@ -563,74 +568,90 @@ export default function Services() {
               </div>
 
               {/* Botão de Agendamento */}
-              <div className="p-4 md:p-5 bg-white border-t border-gray-100 z-20 shadow-lg">
-                <button 
-                  onClick={scheduleWhatsApp} 
-                  className="w-full bg-[#25D366] hover:bg-[#1EBE5A] text-white py-3.5 md:py-4 uppercase font-bold tracking-widest text-[11px] md:text-xs flex items-center justify-center gap-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer touch-manipulation"
+              <div className="p-4 md:p-6 bg-white border-t border-gray-100 flex items-center justify-between gap-4 z-20">
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-gray-400 block">Selecionado</span>
+                  <span className="font-serif font-medium text-sm md:text-base text-[var(--color-dark)] line-clamp-1">
+                    {currentItem ? currentItem.name : selectedCategory.title}
+                  </span>
+                </div>
+                <button
+                  onClick={scheduleWhatsApp}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl text-xs uppercase font-bold tracking-widest transition-all duration-300 shadow-lg flex items-center gap-2 cursor-pointer touch-manipulation flex-shrink-0"
                 >
-                  <i className="ph-fill ph-whatsapp-logo text-lg"></i> Agendar via WhatsApp
+                  <i className="ph-fill ph-whatsapp-logo text-base"></i>
+                  Agendar via WhatsApp
                 </button>
               </div>
-
             </div>
 
           </div>
         </div>
       )}
 
-      {/* Modal de Adicionar/Editar Categoria (Admin) */}
+      {/* Modais de Administração (Categoria e Item) */}
+      {/* Modal de Categoria */}
       {isCatModalOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsCatModalOpen(false)}></div>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 animate-fade-in">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={() => setIsCatModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-2xl z-10 animate-scale-up">
-            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6 font-medium">
+            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">
               {editingCat ? 'Editar Categoria' : 'Nova Categoria'}
             </h3>
             <form onSubmit={handleSaveCat} className="space-y-4">
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Título da Categoria</label>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Título da Categoria</label>
                 <input 
                   type="text" 
                   value={catTitle} 
                   onChange={(e) => setCatTitle(e.target.value)} 
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)]"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition"
                   placeholder="Ex: Mechas & Coloração"
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Descrição Curta</label>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Descrição Curta</label>
                 <textarea 
                   value={catDesc} 
                   onChange={(e) => setCatDesc(e.target.value)} 
                   required
                   rows={2}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)] resize-none"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition resize-none"
                   placeholder="Breve resumo da categoria..."
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">URL da Imagem de Capa</label>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Imagem de Capa</label>
+                <button
+                  type="button"
+                  onClick={() => setIsCatImagePickerOpen(true)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer mb-2 shadow-sm"
+                >
+                  <i className="ph ph-images text-base text-[var(--color-gold)]"></i>
+                  Escolher da Galeria do Sistema
+                </button>
                 <input 
-                  type="url" 
+                  type="text" 
                   value={catImg} 
                   onChange={(e) => setCatImg(e.target.value)} 
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)]"
-                  placeholder="https://images.unsplash.com/..."
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition"
+                  placeholder="https://..."
                 />
+                {catImg && <img src={catImg} alt="Preview Capa" className="mt-3 h-24 w-full object-cover rounded-xl shadow-md bg-gray-100" />}
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-3 pt-4">
                 <button 
                   type="button" 
-                  onClick={() => setIsCatModalOpen(false)} 
-                  className="px-5 py-2.5 rounded-xl text-xs uppercase font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
+                  onClick={() => setIsCatModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
-                  type="submit" 
-                  className="px-6 py-2.5 rounded-xl text-xs uppercase font-bold bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] transition cursor-pointer shadow-md"
+                  type="submit"
+                  className="bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold transition cursor-pointer shadow-md"
                 >
                   Salvar
                 </button>
@@ -640,70 +661,79 @@ export default function Services() {
         </div>
       )}
 
-      {/* Modal de Adicionar/Editar Item (Admin) */}
+      {/* Modal de Item */}
       {isItemModalOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsItemModalOpen(false)}></div>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 animate-fade-in">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={() => setIsItemModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-2xl z-10 animate-scale-up">
-            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6 font-medium">
-              {editingItem ? 'Editar Serviço' : 'Novo Serviço'}
+            <h3 className="font-serif text-2xl text-[var(--color-dark)] mb-6">
+              {editingItem ? 'Editar Procedimento' : 'Novo Procedimento'}
             </h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Nome do Serviço</label>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Nome do Procedimento</label>
                 <input 
                   type="text" 
                   value={itemName} 
                   onChange={(e) => setItemName(e.target.value)} 
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)]"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition"
                   placeholder="Ex: Mechas Loiras"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Preço (R$ ou 'A avaliar')</label>
+                  <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Preço (R$ ou 'A avaliar')</label>
                   <input 
                     type="text" 
                     value={itemPrice} 
                     onChange={(e) => setItemPrice(e.target.value)} 
                     required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)]"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition"
                     placeholder="Ex: 540,00"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Mídia (URL Imagem / YouTube / Insta)</label>
+                  <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Mídia (Foto/Vídeo/YouTube)</label>
+                  <button
+                    type="button"
+                    onClick={() => setIsItemImagePickerOpen(true)}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer mb-2 shadow-sm"
+                  >
+                    <i className="ph ph-images text-base text-[var(--color-gold)]"></i>
+                    Escolher Galeria
+                  </button>
                   <input 
                     type="text" 
                     value={itemMedia} 
                     onChange={(e) => setItemMedia(e.target.value)} 
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)]"
-                    placeholder="Link da imagem ou vídeo"
+                    required
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition"
+                    placeholder="https://..."
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs uppercase font-bold text-gray-600 mb-1">Descrição Detalhada</label>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1.5">Descrição do Procedimento</label>
                 <textarea 
                   value={itemDesc} 
                   onChange={(e) => setItemDesc(e.target.value)} 
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--color-gold)] resize-none"
-                  placeholder="Detalhes sobre o procedimento..."
+                  rows={2}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-gold)] transition resize-none"
+                  placeholder="Detalhes do procedimento..."
                 />
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-3 pt-4">
                 <button 
                   type="button" 
-                  onClick={() => setIsItemModalOpen(false)} 
-                  className="px-5 py-2.5 rounded-xl text-xs uppercase font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
+                  onClick={() => setIsItemModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button 
-                  type="submit" 
-                  className="px-6 py-2.5 rounded-xl text-xs uppercase font-bold bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] transition cursor-pointer shadow-md"
+                  type="submit"
+                  className="bg-[var(--color-dark)] text-white hover:bg-[var(--color-gold)] px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold transition cursor-pointer shadow-md"
                 >
                   Salvar
                 </button>
@@ -713,28 +743,43 @@ export default function Services() {
         </div>
       )}
 
+      {/* Modais de Image Picker */}
+      <ImagePickerModal
+        isOpen={isCatImagePickerOpen}
+        onClose={() => setIsCatImagePickerOpen(false)}
+        onSelect={(url) => setCatImg(url)}
+        defaultFolder="services"
+      />
+
+      <ImagePickerModal
+        isOpen={isItemImagePickerOpen}
+        onClose={() => setIsItemImagePickerOpen(false)}
+        onSelect={(url) => setItemMedia(url)}
+        defaultFolder="services"
+      />
+
       {/* Modal de Confirmação de Exclusão */}
       {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })}></div>
+        <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 animate-fade-in">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md" onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })}></div>
           <div className="relative bg-white w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl z-10 text-center animate-scale-up">
-            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 shadow-sm">
               <i className="ph-fill ph-warning"></i>
             </div>
             <h3 className="font-serif text-xl text-[var(--color-dark)] mb-2">Confirmar Exclusão</h3>
-            <p className="text-gray-500 text-sm mb-6">
-              Tem certeza que deseja excluir <span className="font-bold text-gray-700">"{deleteConfirm.title}"</span>? Esta ação não pode ser desfeita.
+            <p className="text-gray-500 text-sm font-light mb-6">
+              Tem certeza que deseja excluir <span className="font-semibold text-gray-700">&quot;{deleteConfirm.title}&quot;</span>? Esta ação não pode ser desfeita.
             </p>
             <div className="flex justify-center gap-3">
               <button 
-                onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })} 
-                className="px-5 py-2.5 rounded-xl text-xs uppercase font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
+                onClick={() => setDeleteConfirm({ isOpen: false, type: null, id: null, title: '' })}
+                className="px-5 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold text-gray-500 hover:bg-gray-100 transition cursor-pointer"
               >
                 Cancelar
               </button>
               <button 
-                onClick={confirmDeleteAction} 
-                className="px-6 py-2.5 rounded-xl text-xs uppercase font-bold bg-red-600 text-white hover:bg-red-700 transition cursor-pointer shadow-md"
+                onClick={confirmDeleteAction}
+                className="bg-red-600 text-white hover:bg-red-700 px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest font-bold transition cursor-pointer shadow-md"
               >
                 Sim, Excluir
               </button>

@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import ImagePickerModal from '@/components/ImagePickerModal';
 
 const initialSlides = [
   {
@@ -30,6 +31,9 @@ export default function Carousel() {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [img, setImg] = useState('');
+
+  // Estado para o ImagePickerModal unificado
+  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
 
   // Referências para controle do Touch / Swipe no Mobile
   const touchStartX = useRef(0);
@@ -123,17 +127,14 @@ export default function Carousel() {
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
     const distance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50; // Limite mínimo para considerar um swipe
+    const minSwipeDistance = 50;
 
     if (distance > minSwipeDistance) {
-      // Deslizou para a esquerda -> Próximo slide
       setCurrentIndex((prev) => (prev + 1) % slides.length);
     } else if (distance < -minSwipeDistance) {
-      // Deslizou para a direita -> Slide anterior
       setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
     }
 
-    // Reseta valores
     touchStartX.current = 0;
     touchEndX.current = 0;
   };
@@ -214,10 +215,20 @@ export default function Carousel() {
               </div>
               
               <div>
-                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">URL da Imagem de Fundo</label>
+                <label className="block text-[11px] uppercase font-bold text-gray-600 mb-1.5 tracking-wider">Imagem de Fundo</label>
+                
+                <button
+                  type="button"
+                  onClick={() => setIsImagePickerOpen(true)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer mb-2"
+                >
+                  <i className="ph ph-images text-base text-[var(--color-gold)]"></i>
+                  Escolher da Galeria do Sistema
+                </button>
+
                 <input 
-                  type="url" 
-                  placeholder="https://exemplo.com/banner.jpg"
+                  type="text" 
+                  placeholder="/images/carousel/exemplo.png"
                   value={img} 
                   onChange={(e) => setImg(e.target.value)} 
                   className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-[var(--color-gold)] transition bg-white text-gray-700" 
@@ -233,6 +244,13 @@ export default function Carousel() {
           </div>
         </div>
       )}
+
+      <ImagePickerModal
+        isOpen={isImagePickerOpen}
+        onClose={() => setIsImagePickerOpen(false)}
+        onSelect={(selectedUrl) => setImg(selectedUrl)}
+        defaultFolder="carousel"
+      />
     </section>
   );
 }
