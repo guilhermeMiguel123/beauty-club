@@ -69,7 +69,7 @@ export default function Products() {
 
   // Paginação dos produtos
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 4;
 
   // Estado para feedback visual de produto adicionado
   const [addedId, setAddedId] = useState<number | null>(null);
