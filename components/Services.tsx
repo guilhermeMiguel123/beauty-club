@@ -169,6 +169,19 @@ export default function Services() {
   const [isMounted, setIsMounted] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
+  // Paginação dos serviços
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const totalPages = Math.max(1, Math.ceil(services.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedServices = services.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   // Estados para os Modais de ImagePicker
   const [isCatImagePickerOpen, setIsCatImagePickerOpen] = useState(false);
   const [isItemImagePickerOpen, setIsItemImagePickerOpen] = useState(false);
@@ -377,7 +390,7 @@ export default function Services() {
 
       {/* Grid de Categorias com Efeitos de Animação e Hover */}
       <div className="max-w-7xl mx-auto px-3 md:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-8 relative z-10 text-left">
-        {services.map((category: any, idx: number) => (
+        {paginatedServices.map((category: any, idx: number) => (
           <div 
             key={category.id} 
             role="button"
@@ -441,6 +454,63 @@ export default function Services() {
           </div>
         ))}
       </div>
+
+      {/* Paginação dos Serviços */}
+      {totalPages > 1 && (
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 relative z-10">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+              disabled={currentPage === 1}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                currentPage === 1
+                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                  : 'border-[var(--color-gold)]/30 text-[var(--color-dark)] hover:bg-[var(--color-gold)] hover:text-white hover:border-[var(--color-gold)] cursor-pointer'
+              }`}
+              aria-label="Página anterior"
+            >
+              <i className="ph ph-caret-left"></i>
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const page = index + 1;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
+                    currentPage === page
+                      ? 'bg-[var(--color-gold)] text-white shadow-lg scale-105'
+                      : 'bg-white text-[var(--color-dark)] border border-gray-200 hover:border-[var(--color-gold)] hover:text-[var(--color-gold)]'
+                  }`}
+                  aria-label={`Ir para a página ${page}`}
+                  aria-current={currentPage === page ? 'page' : undefined}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                currentPage === totalPages
+                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                  : 'border-[var(--color-gold)]/30 text-[var(--color-dark)] hover:bg-[var(--color-gold)] hover:text-white hover:border-[var(--color-gold)] cursor-pointer'
+              }`}
+              aria-label="Próxima página"
+            >
+              <i className="ph ph-caret-right"></i>
+            </button>
+          </div>
+
+          <p className="text-center text-[10px] uppercase tracking-[0.2em] text-gray-400 mt-4">
+            Página {currentPage} de {totalPages}
+          </p>
+        </div>
+      )}
 
       {/* Modal / Visualizador de Categoria */}
       {selectedCategory && (
